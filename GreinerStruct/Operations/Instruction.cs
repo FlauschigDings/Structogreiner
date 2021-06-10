@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct
+namespace GreinerStruct.Operations
 {
-    internal class Parser
+    public abstract class Instruction
     {
-
     }
 }

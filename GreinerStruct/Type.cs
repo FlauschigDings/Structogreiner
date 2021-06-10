@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct
 {
-    internal class Parser
-    {
-
-    }
+    internal record Type(string Name);
 }
