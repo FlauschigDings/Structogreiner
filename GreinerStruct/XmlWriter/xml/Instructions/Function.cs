@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.Operations
+namespace GreinerStruct.XmlWriter.xml.Instructions
 {
-    public abstract class Instruction
+    internal class Function
     {
+
     }
 }
