@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GreinerStruct.XmlWriter;
+using GreinerStruct.XmlWriter.Instructions;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -10,17 +12,16 @@ namespace GreinerStruct
         static void Main(string[] args)
         {
             XmlSerializer ser = new XmlSerializer(typeof(XmlElement));
-            XmlElement myElement =
-            new XmlDocument().CreateElement("root", "ns");
-            myElement.InnerText = "Hello World";
-            TextWriter writer = new StreamWriter("sex.lsd");
-            ser.Serialize(writer, new FetterSack("hallo"));
+            TextWriter writer = new StreamWriter("sex.nsd");
+
+            var a = new XmlRoot("hallo", "nick");
+            a.AddXmlObject(new CreateVariable("aaa", "hallo"));
+            a.AddXmlObject(new CreateVariable("greiner", "aaaa"));
+            a.AddXmlObject(new CreateVariable("ssss", "sddd"));
+            a.AddXmlObject(new CreateVariable("sdssaddsasdasss", "sddddasdsasda"));
+
+            ser.Serialize(writer, a.Xml());
             writer.Close();
-
         }
-
-        [XmlRoot("PurchaseOrder", Namespace = "http://www.cpandl.com/",
-IsNullable = false)]
-        public record FetterSack(string Greiner);
     }
 }
