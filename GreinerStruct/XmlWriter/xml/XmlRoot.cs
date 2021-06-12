@@ -1,17 +1,35 @@
-﻿using System;
+﻿using GreinerStruct.XmlWriter.Instructions;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GreinerStruct.XmlWriter
 {
+    enum MethodType
+    {
+        Main,
+        Sub,
+        Includable
+    }
+
     class XmlRoot : XmlWriter
     {
         public XmlChildren children { get; set; }
 
-        public XmlRoot(string title, string author, string type = "sub", string comment = "created by GreinerStruct") : base("root")
+        public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, VariableDeclaration returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
+            // Check if the type is sus AMOGUS!
+            if(type is MethodType.Sub)
+            {
+                var savetile = title;
+
+
+
+            }
+
             this.children = new XmlChildren();
             var created = DateTime.Now;
             //--------------------------------- Default Values -------------------------------------
@@ -40,8 +58,7 @@ namespace GreinerStruct.XmlWriter
             this.AddAttribute("changed", created);
             this.AddAttribute("text", title);
             this.AddAttribute("comment", comment);
-            // MAIN, SUB or INCLUDABLE
-            this.AddAttribute("type", type);
+            this.AddAttribute("type", type.ToString());
         }
 
         public void AddXmlObject<T>(T s) where T : XmlInstruction {
