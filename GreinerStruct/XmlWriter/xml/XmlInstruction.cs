@@ -9,7 +9,7 @@ namespace GreinerStruct.XmlWriter
 
     class XmlInstruction : XmlWriter
     {
-        public XmlInstruction(string text, string comment, int rotated, int disable) : base("instruction") 
+        public XmlInstruction(string text, string comment, int rotated, int disable) : base("instruction")
         {
             this.AddAttribute("text", text);
             this.AddAttribute("comment", comment);

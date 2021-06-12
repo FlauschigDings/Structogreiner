@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.XmlWriter.Instructions
+namespace GreinerStruct.XmlWriter.xml.Instructions
 {
     internal class VariableDeclaration : XmlInstruction
     {
