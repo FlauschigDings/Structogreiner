@@ -21,17 +21,37 @@ namespace GreinerStruct.XmlWriter
 
         public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, VariableDeclaration returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
+            this.children = new XmlChildren();
+            var created = DateTime.Now;
             // Check if the type is sus AMOGUS!
-            if(type is MethodType.Sub)
+            if (type is MethodType.Sub)
             {
                 var savetile = title;
 
+                var inputParamTitle = "Eingabe Parameter:";
 
+                var inputParam = new StringBuilder();
+
+                variables.ForEach(e => inputParam.Append($",\" {e.Name}: {e.Type}\""));
+
+                var returnParmTitle = "";
+                var returnParm = "";
+
+
+                if (returnType is not null)
+                {
+
+                    returnParmTitle = "Rückgabe Parameter:";
+
+                    returnParm = $" {returnType.Name}: {returnType.Type}";
+                }
+
+                title = $"\"{savetile}\", \"{inputParamTitle}\", {inputParam.ToString()}, {returnParmTitle}, {returnParm}";
 
             }
+            if(type is MethodType.Main || type is MethodType.Includable)
+                variables.ForEach(e => this.AddXmlObject(e));
 
-            this.children = new XmlChildren();
-            var created = DateTime.Now;
             //--------------------------------- Default Values -------------------------------------
             this.AddAttribute("xmlns:nsd", "https://structorizer.fisch.lu");
             this.AddAttribute("version", "3.30-14");
@@ -58,7 +78,7 @@ namespace GreinerStruct.XmlWriter
             this.AddAttribute("changed", created);
             this.AddAttribute("text", title);
             this.AddAttribute("comment", comment);
-            this.AddAttribute("type", type.ToString());
+            this.AddAttribute("type", type.ToString().ToLower());
         }
 
         public void AddXmlObject<T>(T s) where T : XmlInstruction {
