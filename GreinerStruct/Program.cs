@@ -16,8 +16,8 @@ namespace GreinerStruct
         {
             XmlSerializer ser = new XmlSerializer(typeof(XmlElement));
             TextWriter writer = new StreamWriter("sex.nsd");
-            var sas = new List<VariableDeclaration>() { new VariableDeclaration ("greiner", new Type(Type.TypeOf<int>())), new VariableDeclaration("greinder", new Type(Type.TypeOf<int>())), new VariableDeclaration("weedfarm", new Type(Type.TypeOf<int>())) };
-            var a = new XmlRoot("hallo", "nick", sas.ToImmutableList());
+            var sus = new List<VariableDeclaration>() { new VariableDeclaration ("greiner", new Type(Type.TypeOf<int>())), new VariableDeclaration("greinder", new Type(Type.TypeOf<int>())), new VariableDeclaration("weedfarm", new Type(Type.TypeOf<int>())) };
+            var a = new XmlRoot("hallo", "nick", sus.ToImmutableList(), null, MethodType.Sub);
             //a.AddXmlObject(new VariableDeclaration("aaa", new Type(Type.TypeOf<int>())));
             a.AddXmlObject(new VariableSet("aaa", "4538435"));
 
