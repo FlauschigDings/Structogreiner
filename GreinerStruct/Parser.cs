@@ -1,5 +1,5 @@
 ﻿using GreinerStruct.XmlWriter;
-using GreinerStruct.XmlWriter.xml.Instructions;
+using GreinerStruct.XmlWriter.Instructions;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -12,7 +12,8 @@ namespace GreinerStruct
         {
             XmlSerializer ser = new XmlSerializer(typeof(XmlElement));
             TextWriter writer = new StreamWriter("sex.nsd");
-            var root = await Parser.Parse(@$"C:\Users\{Environment.UserName}\source\repos\FlauschigDings\GreinerStruct\GreinerStruct\GreinerStruct.csproj");
+            var root = await Parser.Parse(@$"A:\GreinerStruct\Test\Test\Test\Test.csproj");
+            //var root = await Parser.Parse(@$"C:\Users\{Environment.UserName}\source\repos\FlauschigDings\GreinerStruct\GreinerStruct\GreinerStruct.csproj");
             ser.Serialize(writer, root.Xml());
             writer.Close();
         }
