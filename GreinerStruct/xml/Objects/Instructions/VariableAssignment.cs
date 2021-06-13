@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.XmlWriter.xml.Instructions
+namespace GreinerStruct.XmlWriter.Instructions
 {
-    internal class VariableSet : XmlInstruction
+    internal class VariableAssignment : XmlInstruction
     {
         public string Name { get; }
         public string Value { get; }
 
-        public VariableSet(string name, string value) : base($"{name}<- {value}", "", 0, 0)
+        public VariableAssignment(string name, string value) : base($"{name} <- {value}", "", 0, 0)
         {
             Name = name;
             Value = value;

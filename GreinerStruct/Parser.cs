@@ -2,6 +2,7 @@
 using GreinerStruct.XmlWriter.Instructions;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
@@ -16,46 +17,123 @@ namespace GreinerStruct
 {
     internal class Parser
     {
-        public static async Task<XmlRoot> Parse(string projectFile)
+        public static async Task<List<XmlRoot>> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(projectFile);
-
-            var variables = new List<VariableDeclaration>();
+            var roots = new List<XmlRoot>();
 
             foreach (var document in project.Documents)
             {
-                await ParseDocument(variables, document);
+                roots.AddRange(await ParseDocument(document));
             }
-
-            return new XmlRoot(Path.GetFileName(projectFile), Environment.UserName, variables.ToImmutableList());
+            return roots;
         }
 
-        private static async Task ParseDocument(List<VariableDeclaration> variables, Document document)
+        private static async Task<List<XmlRoot>> ParseDocument(Document document)
         {
             var rootNode = (await document.GetSyntaxRootAsync())!;
             var semanticModel = (await document.GetSemanticModelAsync())!;
+
+            var methods = new List<XmlRoot>();
 
             foreach (var node in rootNode.DescendantNodes())
             {
                 if (node is MethodDeclarationSyntax method && method.Identifier.Text == "Main")
                 {
-                    ParseMethod(variables, semanticModel, node);
+                    methods.Add(ParseMethod(method, semanticModel));
                 }
             }
+            return methods;
         }
 
-        private static void ParseMethod(List<VariableDeclaration> variables, SemanticModel semanticModel, SyntaxNode node)
+        private static XmlRoot ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel)
         {
-            foreach (var subNode in node.DescendantNodes())
+            var variables = new List<VariableDeclaration>();
+            foreach (var node in method.DescendantNodes())
             {
-                if (subNode is VariableDeclarationSyntax vd)
+                if (node is LocalDeclarationStatementSyntax lvd)
+                {
+                    ParseVariables(lvd, semanticModel, variables);
+                }
+                if(node is ForStatementSyntax fs)
+                {
+                    var symbolInfo = semanticModel.GetSymbolInfo(fs.Declaration.Type);
+                    var type = symbolInfo.Symbol?.Name;
+                    variables.Add(new VariableDeclaration(fs.Declaration.Variables[0].Identifier.Text, new Type(type)));
+                }
+            }
+            var instructions = ParseBlock(method.Body);
+            var root = new XmlRoot(method.Identifier.Text, "", variables.ToImmutableList());
+            foreach (var instruction in instructions)
+            {
+                root.AddXmlObject(instruction);
+            }
+            return root;
+        }
+
+        private static List<XmlObject> ParseBlock(SyntaxNode block)
+        {
+            var instructions = new List<XmlObject>();
+            foreach (var node in block.ChildNodes())
+            {
+                if (node is ForStatementSyntax fs)
+                {
+                    instructions.Add(ParseFor(fs));
+                }
+                if (node is ExpressionStatementSyntax expression && expression.Expression is AssignmentExpressionSyntax assignment)
+                {
+                    instructions.Add(ParseVariableAssignment(assignment));
+                }
+            }
+            return instructions;
+        }
+
+        private static VariableAssignment ParseVariableAssignment(AssignmentExpressionSyntax assignment)
+        {
+            return new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString());
+        }
+
+        private static XmlFor ParseFor(ForStatementSyntax fs)
+        {
+            var forVar = fs.Declaration.Variables[0];
+            var forVarName = forVar.Identifier.Text;
+
+            var startValue = new IntVariable(forVar.Initializer.Value.ToString());
+            var cond = (BinaryExpressionSyntax)fs.Condition;
+
+            var endValue = new IntVariable(cond.Right.ToString());
+            if(cond.IsKind(SyntaxKind.LessThanToken))
+            {
+                endValue.Subtract(1);
+            }
+
+            var incrementor = fs.Incrementors[0];
+            var step = incrementor switch
+            {
+                PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
+            };
+            var xmlFor = new XmlFor(forVarName, startValue, endValue, step);
+            foreach (var instruction in ParseBlock(fs.Statement))
+            {
+                xmlFor.AddXmlObject(instruction);
+            }
+            return xmlFor;
+        }
+
+        private static void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
+        {
+            var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
+            var type = symbolInfo.Symbol?.Name;
+
+            foreach (var node in lvd.DescendantNodes())
+            {
+                if(node is VariableDeclarationSyntax vd)
                 {
                     var name = vd.Variables[0].Identifier.Text;
-                    var lvd = (LocalDeclarationStatementSyntax)vd.Parent!;
-                    var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
-                    var type = symbolInfo.Symbol?.Name;
                     variables.Add(new VariableDeclaration(name, new Type(type)));
                 }
             }

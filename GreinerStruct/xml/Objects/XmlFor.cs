@@ -11,7 +11,7 @@ namespace GreinerStruct.XmlWriter
 
         private readonly XmlqFor xmlqFor;
 
-        public XmlFor(string variableName, int startValue, int endValue, int stepConst) : base("for")
+        public XmlFor(string variableName, IntVariable startValue, IntVariable endValue, IntVariable stepConst) : base("for")
         {
             this.xmlqFor = new XmlqFor();
             this.AddAttribute("text", $"{variableName}: AW={startValue}, EW={endValue}, SW={stepConst}");
