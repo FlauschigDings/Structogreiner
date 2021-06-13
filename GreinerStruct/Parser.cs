@@ -26,29 +26,39 @@ namespace GreinerStruct
 
             foreach (var document in project.Documents)
             {
-                var rootNode = (await document.GetSyntaxRootAsync())!;
-                var semanticModel = (await document.GetSemanticModelAsync())!;
-
-                foreach (var node in rootNode.DescendantNodes())
-                {
-                    if (node is MethodDeclarationSyntax method && method.Identifier.Text == "Main")
-                    {
-                        foreach (var subNode in node.DescendantNodes())
-                        {
-                            if (subNode is VariableDeclarationSyntax vd)
-                            {
-                                var name = vd.Variables[0].Identifier.Text;
-                                var lvd = (LocalDeclarationStatementSyntax)vd.Parent!;
-                                var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
-                                var type = symbolInfo.Symbol?.Name;
-                                variables.Add(new VariableDeclaration(name, new Type(type)));
-                            }
-                        }
-                    }
-                }
+                await ParseDocument(variables, document);
             }
 
             return new XmlRoot(Path.GetFileName(projectFile), Environment.UserName, variables.ToImmutableList());
+        }
+
+        private static async Task ParseDocument(List<VariableDeclaration> variables, Document document)
+        {
+            var rootNode = (await document.GetSyntaxRootAsync())!;
+            var semanticModel = (await document.GetSemanticModelAsync())!;
+
+            foreach (var node in rootNode.DescendantNodes())
+            {
+                if (node is MethodDeclarationSyntax method && method.Identifier.Text == "Main")
+                {
+                    ParseMethod(variables, semanticModel, node);
+                }
+            }
+        }
+
+        private static void ParseMethod(List<VariableDeclaration> variables, SemanticModel semanticModel, SyntaxNode node)
+        {
+            foreach (var subNode in node.DescendantNodes())
+            {
+                if (subNode is VariableDeclarationSyntax vd)
+                {
+                    var name = vd.Variables[0].Identifier.Text;
+                    var lvd = (LocalDeclarationStatementSyntax)vd.Parent!;
+                    var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
+                    var type = symbolInfo.Symbol?.Name;
+                    variables.Add(new VariableDeclaration(name, new Type(type)));
+                }
+            }
         }
     }
 }
