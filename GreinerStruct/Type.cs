@@ -60,5 +60,8 @@ namespace GreinerStruct
 
         public static string TypeOf<T>() => typeof(T).FullName;
         public override string ToString() => dictionary.TryGetValue(Name, out var newName)? newName : Name;
+
+        public static Type CreateType<T>() => new Type(typeof(T).FullName);
+
         }
 }
