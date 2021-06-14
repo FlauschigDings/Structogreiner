@@ -20,7 +20,7 @@ namespace GreinerStruct.XmlWriter
         public XmlChildren children { get; set; }
         public string title { get; set; }
 
-        public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, VariableDeclaration returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
+        public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
             this.children = new XmlChildren();
             var created = DateTime.Now;
@@ -64,7 +64,7 @@ namespace GreinerStruct.XmlWriter
             return this;
         }
 
-        private string Translate(string title, MethodType type, ImmutableList<VariableDeclaration> variables, VariableDeclaration returnType)
+        private string Translate(string title, MethodType type, ImmutableList<VariableDeclaration> variables, Type returnType)
         {
 
             if (type is MethodType.Sub)
@@ -84,7 +84,7 @@ namespace GreinerStruct.XmlWriter
 
                     returnParmTitle = "Rückgabe Parameter:";
 
-                    returnParm = $" {returnType.Name}: {returnType.Type}";
+                    returnParm = $" {returnType}";
                 }
 
                 return $"\"{title}\", \"{inputParamTitle}\", {inputParam}, {returnParmTitle}, {returnParm}";

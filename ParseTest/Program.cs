@@ -30,7 +30,8 @@ namespace ParseTest
 
         void Test()
         {
-
+            var a = "dsasad";
+            Console.WriteLine(a);
         }
     }
 }

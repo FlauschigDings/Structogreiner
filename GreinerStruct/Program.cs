@@ -17,8 +17,10 @@ namespace GreinerStruct
             using var writer = new StreamWriter("sex.nsd");
             var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
 
-            await arrz.Add(writer, roots.Single());
-            await arrz.Add(writer, roots.Single());
+            foreach (var root in roots)
+            {
+                await arrz.Add(writer, root);
+            }
 
             await arrz.WriteArrrrrrrrrFile();
         }

@@ -5,12 +5,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GreinerStruct
@@ -57,15 +53,19 @@ namespace GreinerStruct
                 {
                     ParseVariables(lvd, semanticModel, variables);
                 }
-                if(node is ForStatementSyntax fs)
+                if (node is ForStatementSyntax fs)
                 {
                     var symbolInfo = semanticModel.GetSymbolInfo(fs.Declaration.Type);
-                    var type = symbolInfo.Symbol?.Name;
-                    variables.Add(new VariableDeclaration(fs.Declaration.Variables[0].Identifier.Text, new Type(type)));
+                    var varType = symbolInfo.Symbol?.Name;
+                    variables.Add(new VariableDeclaration(fs.Declaration.Variables[0].Identifier.Text, new Type(varType)));
                 }
             }
             var instructions = ParseBlock(method.Body);
-            var root = new XmlRoot(method.Identifier.Text, "", variables.ToImmutableList());
+
+            var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
+            var returnType = new Type(method.ReturnType.ToString());
+
+            var root = new XmlRoot(method.Identifier.Text, "", variables.ToImmutableList(), returnType, type);
             foreach (var instruction in instructions)
             {
                 root.AddXmlObject(instruction);
@@ -92,10 +92,10 @@ namespace GreinerStruct
                     ParseVariableAssignment(lvd, instructions);
                 }
 
-                if(node is SwitchStatementSyntax ss)
+                if (node is SwitchStatementSyntax ss)
                 {
                     var sections = ss.Sections;
-                   // new XmlSwitch(ss.Expression.ToString(), )
+                    // new XmlSwitch(ss.Expression.ToString(), )
                 }
             }
             return instructions;
@@ -128,7 +128,7 @@ namespace GreinerStruct
             var cond = (BinaryExpressionSyntax)fs.Condition;
 
             var endValue = new IntVariable(cond.Right.ToString());
-            if(cond.IsKind(SyntaxKind.LessThanToken))
+            if (cond.IsKind(SyntaxKind.LessThanToken))
             {
                 endValue.Subtract(1);
             }
@@ -155,7 +155,7 @@ namespace GreinerStruct
 
             foreach (var node in lvd.DescendantNodes())
             {
-                if(node is VariableDeclarationSyntax vd)
+                if (node is VariableDeclarationSyntax vd)
                 {
                     var name = vd.Variables[0].Identifier.Text;
                     variables.Add(new VariableDeclaration(name, new Type(type)));
