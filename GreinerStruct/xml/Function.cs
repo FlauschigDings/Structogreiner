@@ -20,7 +20,7 @@ namespace GreinerStruct.XmlWriter
         public XmlChildren Children { get; set; }
         public string Title { get; set; }
 
-        public Function(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
+        public Function(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type? returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
             this.Children = new XmlChildren();
             var created = DateTime.Now;
@@ -65,14 +65,14 @@ namespace GreinerStruct.XmlWriter
             return this;
         }
 
-        private string Translate(string title, MethodType type, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType)
+        private string Translate(string title, MethodType type, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type? returnType)
         {
             if (type is MethodType.Sub)
             {
-                string inputParmsTitle = $"{Program.i18n.InputParameter()}:";
+                var inputParmsTitle = $"{Program.i18n.InputParameter()}:";
                 var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
 
-                string varsTitle = $"{Program.i18n.VariableDeclaration()}:";
+                var varsTitle = $"{Program.i18n.VariableDeclaration()}:";
                 var varsParam = string.Join(",", variables.Select(v => $"{v.Name}: {v.Type}"));
 
                 var returnParmTitle = "";

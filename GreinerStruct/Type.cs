@@ -8,11 +8,10 @@ namespace GreinerStruct
 {
     internal record Type(string Name)
     {
-
-        public static string TypeOf<T>() => typeof(T).FullName.Split(".")[1];
+        public static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
         public override string ToString() => Program.i18n.Mappings().TryGetValue(Name, out var newName) ? newName : Name;
 
-        public static Type CreateType<T>() => new Type(typeof(T).FullName);
+        public static Type CreateType<T>() => new Type(typeof(T).FullName!);
 
     }
 }

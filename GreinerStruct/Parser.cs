@@ -59,35 +59,39 @@ namespace GreinerStruct
             var variables = new List<VariableDeclaration>();
             foreach (var node in method.DescendantNodes())
             {
-                if (node is LocalDeclarationStatementSyntax lvd)
+                switch (node)
                 {
-                    ParseVariables(lvd, semanticModel, variables);
-                }
-                if (node is ForStatementSyntax fs)
-                {
-                    var symbolInfo = semanticModel.GetSymbolInfo(fs.Declaration.Type);
-                    var varType = symbolInfo.Symbol?.Name;
-                    variables.Add(new VariableDeclaration(fs.Declaration.Variables[0].Identifier.Text, new Type(varType)));
+                    case LocalDeclarationStatementSyntax lvd:
+                        ParseVariables(lvd, semanticModel, variables);
+                        break;
+                    case ForStatementSyntax fs:
+                    {
+                        var declaration = fs.Declaration;
+                        if (declaration is null) break;
+                        var symbolInfo = semanticModel.GetSymbolInfo(declaration.Type);
+                        var varType = symbolInfo.Symbol?.Name!;
+                        variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text, new Type(varType)));
+                        break;
+                    }
                 }
             }
 
             var parameters = method.ParameterList.Parameters.Select(p => new VariableDeclaration(p.Identifier.Text, new Type(semanticModel.GetSymbolInfo(p.Type).Symbol.Name))).ToList();
 
-            var block = (SyntaxNode)method.Body ?? method.ExpressionBody;
-            if (block is not null)
+            var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
+            if (block is null) return;
+            
+            var objects = ParseBlock(block);
+
+            var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
+            var returnType = new Type(method.ReturnType.ToString());
+
+            var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
+            foreach (var instruction in objects)
             {
-                var objects = ParseBlock(block);
-
-                var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
-                var returnType = new Type(method.ReturnType.ToString());
-
-                var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
-                foreach (var instruction in objects)
-                {
-                    root.AddXmlObject(instruction);
-                }
-                methods.Add(root);
+                root.AddXmlObject(instruction);
             }
+            methods.Add(root);
         }
 
         private List<XmlObject> ParseBlock(SyntaxNode block)
@@ -228,7 +232,7 @@ namespace GreinerStruct
 
         private void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> objects)
         {
-            objects.Add(new Return(rs.Expression?.ToString()));
+            objects.Add(new Return(rs.Expression?.ToString() ?? ""));
         }
 
         private void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)
@@ -240,27 +244,30 @@ namespace GreinerStruct
         {
             foreach (var node in lvd.DescendantNodes())
             {
-                if (node is VariableDeclaratorSyntax vd)
+                if (node is not VariableDeclaratorSyntax vd) continue;
+                var name = vd.Identifier.Text;
+                if (vd.Initializer == null) continue;
+                var value = vd.Initializer.Value.ToString();
+                if(value == "Console.ReadKey()")
                 {
-                    var name = vd.Identifier.Text;
-                    var value = vd.Initializer.Value.ToString();
-                    if(value == "Console.ReadKey()")
-                    {
-                        objects.Add(new Input(name));
-                        continue;
-                    }
-                    objects.Add(new VariableAssignment(name, value));
+                    objects.Add(new Input(name));
+                    continue;
                 }
+                objects.Add(new VariableAssignment(name, value));
             }
         }
 
         private void ParseFor(ForStatementSyntax fs, List<XmlObject> objects)
         {
+            if (fs.Declaration is null) return;
             var forVar = fs.Declaration.Variables[0];
+            if (forVar.Initializer is null) return;
+            
             var forVarName = forVar.Identifier.Text;
 
             var startValue = new IntVariable(forVar.Initializer.Value.ToString());
-            var cond = (BinaryExpressionSyntax)fs.Condition;
+            var cond = (BinaryExpressionSyntax?)fs.Condition;
+            if (cond is null) return;
 
             var endValue = new IntVariable(cond.Right.ToString());
             if (cond.IsKind(SyntaxKind.LessThanToken))
@@ -273,7 +280,8 @@ namespace GreinerStruct
             {
                 PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative(),
+                _ => throw new InvalidOperationException("Unsupported incrementor.")
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
             foreach (var xmlObj in ParseBlock(fs.Statement))
@@ -286,15 +294,14 @@ namespace GreinerStruct
         private void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
         {
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
-            var type = symbolInfo.Symbol?.Name;
+            var type = symbolInfo.Symbol!.Name;
 
             foreach (var node in lvd.DescendantNodes())
             {
-                if (node is VariableDeclarationSyntax vd)
-                {
-                    var name = vd.Variables[0].Identifier.Text;
-                    variables.Add(new VariableDeclaration(name, new Type(type)));
-                }
+                if (node is not VariableDeclarationSyntax vd) continue;
+                
+                var name = vd.Variables[0].Identifier.Text;
+                variables.Add(new VariableDeclaration(name, new Type(type)));
             }
         }
     }
