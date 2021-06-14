@@ -21,5 +21,46 @@ namespace ParseTest
             Console.WriteLine(a);
             return a;
         }
+
+        static string Test2()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
+
+        static string Test3()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
+
+        static string Tes4()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
+
+        static string Test5()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
+
+        static string Test100()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
+        static string greindern()
+        {
+            var a = "dsasad";
+            Console.WriteLine(a);
+            return a;
+        }
     }
 }
