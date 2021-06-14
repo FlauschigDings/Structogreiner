@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.XmlWriter
 {
-
-    class XmlObject : XmlWriter
+    class Return : XmlInstruction
     {
-        public XmlObject(string elementName) : base(elementName) {
-            this.AddAttribute("color", "ffffff");
-        }
+        public Return(string text) : base($"RückgabeWert: {text}", type: "jump") { }
     }
 }
