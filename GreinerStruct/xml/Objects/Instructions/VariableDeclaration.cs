@@ -11,7 +11,7 @@ namespace GreinerStruct.XmlWriter.Instructions
         public string Name { get; }
         public Type Type { get; }
 
-        public VariableDeclaration(string name, Type type) : base($"{name}: {type.ToString()}", "", 0, 0)
+        public VariableDeclaration(string name, Type type) : base($"{name}: {type}", "", 0, 0)
         {
             Name = name;
             Type = type;

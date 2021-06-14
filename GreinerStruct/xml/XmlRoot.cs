@@ -86,7 +86,7 @@ namespace GreinerStruct.XmlWriter
                     returnParm = $" {returnType.Name}: {returnType.Type}";
                 }
 
-                return $"\"{title}\", \"{inputParamTitle}\", {inputParam.ToString()}, {returnParmTitle}, {returnParm}";
+                return $"\"{title}\", \"{inputParamTitle}\", {inputParam}, {returnParmTitle}, {returnParm}";
 
             }
                 variables.ForEach(e => this.AddXmlObject(e));

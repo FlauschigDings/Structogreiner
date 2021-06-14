@@ -40,7 +40,7 @@ namespace GreinerStruct
 
             foreach (var node in rootNode.DescendantNodes())
             {
-                if (node is MethodDeclarationSyntax method && method.Identifier.Text == "Main")
+                if (node is MethodDeclarationSyntax method)
                 {
                     methods.Add(ParseMethod(method, semanticModel));
                 }
@@ -82,9 +82,20 @@ namespace GreinerStruct
                 {
                     instructions.Add(ParseFor(fs));
                 }
+
                 if (node is ExpressionStatementSyntax expression && expression.Expression is AssignmentExpressionSyntax assignment)
                 {
                     instructions.Add(ParseVariableAssignment(assignment));
+                }
+                if (node is LocalDeclarationStatementSyntax lvd)
+                {
+                    ParseVariableAssignment(lvd, instructions);
+                }
+
+                if(node is SwitchStatementSyntax ss)
+                {
+                    var sections = ss.Sections;
+                   // new XmlSwitch(ss.Expression.ToString(), )
                 }
             }
             return instructions;
@@ -93,6 +104,19 @@ namespace GreinerStruct
         private static VariableAssignment ParseVariableAssignment(AssignmentExpressionSyntax assignment)
         {
             return new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString());
+        }
+
+        private static void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> instructions)
+        {
+            foreach (var node in lvd.DescendantNodes())
+            {
+                if (node is VariableDeclaratorSyntax vd)
+                {
+                    var name = vd.Identifier.Text;
+                    var value = vd.Initializer.Value.ToString();
+                    instructions.Add(new VariableAssignment(name, value));
+                }
+            }
         }
 
         private static XmlFor ParseFor(ForStatementSyntax fs)
