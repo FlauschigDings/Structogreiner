@@ -4,20 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
+namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
 {
-    internal class DoWhile : LoopBase
+    internal class While : LoopBase
     {
-        public DoWhile(string ifValue) : base("repeat") {
-            this.qLoops = new QDoWhile();
+        public While(string ifValue) : base("while")
+        {
+            this.qLoops = new QWhile();
             this.AddAttribute("text", $"{ifValue} (?)");
             this.AddAttribute("commit", "");
             this.AddAttribute("disable", "0");
         }
 
-        private class QDoWhile : LoopBase.QLoops
+        private class QWhile : LoopBase.QLoops
         {
-            public QDoWhile() : base("qRepeat") { }
+            public QWhile() : base("qWhile") { }
         }
     }
 }

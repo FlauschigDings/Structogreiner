@@ -58,5 +58,5 @@ namespace GreinerStruct
 
         public static Type CreateType<T>() => new Type(typeof(T).FullName);
 
-        }
+    }
 }

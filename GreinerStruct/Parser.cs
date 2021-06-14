@@ -1,5 +1,5 @@
 ﻿using GreinerStruct.Xml.Objects.ControlStructures;
-using GreinerStruct.Xml.Objects.ControlStructures.Loop;
+using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.XmlWriter;
 using Microsoft.Build.Locator;
@@ -9,9 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GreinerStruct

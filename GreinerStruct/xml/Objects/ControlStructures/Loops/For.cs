@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.Xml.Objects.ControlStructures
+namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
 {
     internal class For : XmlObject
     {
@@ -35,7 +35,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
         // idk why they do it that way 
         private class QFor : XmlObject
         {
-            public QFor() : base("qFor") 
+            public QFor() : base("qFor")
             {
                 this.AddAttribute("color", "ffffff");
             }

@@ -58,7 +58,8 @@ namespace GreinerStruct.XmlWriter
             this.AddAttribute("type", type.ToString().ToLower());
         }
 
-        public Function AddXmlObject<T>(T s) where T : XmlObject {
+        public Function AddXmlObject<T>(T s) where T : XmlObject
+        {
             this.Children.AddXmlObject(s);
             this.SetInnerXml(this.Children);
             return this;

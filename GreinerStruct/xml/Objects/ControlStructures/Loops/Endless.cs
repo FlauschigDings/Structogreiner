@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
+namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
 {
     internal class Endless : LoopBase
     {
