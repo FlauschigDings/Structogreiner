@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +15,13 @@ namespace GreinerStruct
 {
     internal class Parser
     {
-        public static async Task<List<Function>> Parse(string projectFile)
+        private I18n _language;
+        public Parser(II18n language)
+        {
+            _language = language;
+        }
+
+        public async Task<List<Function>> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
@@ -30,7 +35,7 @@ namespace GreinerStruct
             return roots;
         }
 
-        private static async Task<List<Function>> ParseDocument(Document document)
+        private async Task<List<Function>> ParseDocument(Document document)
         {
             var rootNode = (await document.GetSyntaxRootAsync())!;
             var semanticModel = (await document.GetSemanticModelAsync())!;
@@ -47,7 +52,7 @@ namespace GreinerStruct
             return methods;
         }
 
-        private static void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<Function> methods)
+        private void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<Function> methods)
         {
             var variables = new List<VariableDeclaration>();
             foreach (var node in method.DescendantNodes())
@@ -79,7 +84,7 @@ namespace GreinerStruct
             methods.Add(root);
         }
 
-        private static List<XmlObject> ParseBlock(SyntaxNode block)
+        private List<XmlObject> ParseBlock(SyntaxNode block)
         {
             var objects = new List<XmlObject>();
             foreach (var node in block.ChildNodes())
@@ -131,7 +136,7 @@ namespace GreinerStruct
             return objects;
         }
 
-        private static void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
+        private void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
         {
             var list = new List<string>();
 
@@ -157,7 +162,7 @@ namespace GreinerStruct
             objects.Add(switchState);
         }
 
-        private static void ParseMethods(InvocationExpressionSyntax invocation, List<XmlObject> objects)
+        private void ParseMethods(InvocationExpressionSyntax invocation, List<XmlObject> objects)
         {
             if (invocation.Expression.ToString() == "Console.WriteLine")
             {
@@ -176,14 +181,14 @@ namespace GreinerStruct
             objects.Add(meth);
         }
 
-        private static void ParseWhileDo(DoStatementSyntax ds, List<XmlObject> objects)
+        private void ParseWhileDo(DoStatementSyntax ds, List<XmlObject> objects)
         {
             var whileVar = new DoWhile(ds.Condition.ToString());
             ParseBlock(ds.Statement).ForEach(e => whileVar.AddXmlObject(e));
             objects.Add(whileVar);
         }
 
-        private static void ParseWhile(WhileStatementSyntax wh, List<XmlObject> objects)
+        private void ParseWhile(WhileStatementSyntax wh, List<XmlObject> objects)
         {
             // While true
             if (wh.Condition.ToString() == "true")
@@ -198,7 +203,7 @@ namespace GreinerStruct
             objects.Add(whileVar);
         }
 
-        private static void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)
+        private void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)
         {
             var ifElse = new IfElse(ifs.Condition.ToString());
             foreach (var xmlObj in ParseBlock(ifs.Statement))
@@ -215,17 +220,17 @@ namespace GreinerStruct
             objects.Add(ifElse);
         }
 
-        private static void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> objects)
+        private void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> objects)
         {
             objects.Add(new Return(rs.Expression?.ToString()));
         }
 
-        private static void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)
+        private void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)
         {
             objects.Add(new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString()));
         }
 
-        private static void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> objects)
+        private void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> objects)
         {
             foreach (var node in lvd.DescendantNodes())
             {
@@ -238,7 +243,7 @@ namespace GreinerStruct
             }
         }
 
-        private static void ParseFor(ForStatementSyntax fs, List<XmlObject> objects)
+        private void ParseFor(ForStatementSyntax fs, List<XmlObject> objects)
         {
             var forVar = fs.Declaration.Variables[0];
             var forVarName = forVar.Identifier.Text;
@@ -267,7 +272,7 @@ namespace GreinerStruct
             objects.Add(xmlFor);
         }
 
-        private static void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
+        private void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
         {
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
             var type = symbolInfo.Symbol?.Name;
