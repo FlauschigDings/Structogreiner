@@ -13,9 +13,9 @@ using System.Xml.Serialization;
 
 namespace GreinerStruct
 {
-    class Program
+    internal static class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             using var arrz = new ArrzFile();
             var ser = new XmlSerializer(typeof(XmlElement));
@@ -39,7 +39,7 @@ namespace GreinerStruct
             //var a = new IfElse("mag kekse");
             //a.AddXmlObject(true, new VariableDeclaration("nudel", Type.CreateType<int>()));
             //a.AddXmlObject(false, new VariableDeclaration("moritz hat eine 6 von Illerie", Type.CreateType<string>()));
-            var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
+            var roots = await Parser.Parse("../../../../ParseTest/ParseTest.csproj");
 
             ////root.AddXmlObject(a);
             ////root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
@@ -47,7 +47,7 @@ namespace GreinerStruct
 
             foreach (var root in roots)
             {
-                await arrz.Add(writer, root);
+                await arrz.Add(root);
             }
 
             await arrz.WriteArrrrrrrrrFile();

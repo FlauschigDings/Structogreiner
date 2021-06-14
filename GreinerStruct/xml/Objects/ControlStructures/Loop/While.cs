@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class While : LoopBase
+    internal class While : LoopBase
     {
         public While(string ifValue) : base("while")
         {

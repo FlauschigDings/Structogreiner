@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.XmlWriter
 {
-    class XmlChildren : XmlWriter
+    internal class XmlChildren : XmlWriter
     {
         public XmlChildren() : base("children") { }
 
         public void AddXmlObject<T>(T s) where T: XmlObject => this.AddInnerXml(s);
 
         public override string ToString() =>  this.XmlString();
-
     }
 }

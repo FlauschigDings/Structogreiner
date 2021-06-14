@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class Call : Inline
+    internal class Call : Inline
     {
         public Call(string methodName) : base("call", methodName) { }
-
     }
 }

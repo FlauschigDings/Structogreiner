@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class LoopBase : XmlObject
+    internal class LoopBase : XmlObject
     {
         protected QLoops qLoops;
 
@@ -32,5 +32,4 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
             }
         }
     }
-    
 }

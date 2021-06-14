@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.XmlWriter
 {
-    enum MethodType
+    internal enum MethodType
     {
         Main,
         Sub,
         Includable
     }
 
-    class XmlRoot : XmlWriter
+    internal class XmlRoot : XmlWriter
     {
-        public XmlChildren children { get; set; }
-        public string title { get; set; }
+        public XmlChildren Children { get; set; }
+        public string Title { get; set; }
 
         public XmlRoot(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
-            this.children = new XmlChildren();
+            this.Children = new XmlChildren();
             var created = DateTime.Now;
-            this.title = title;
+            this.Title = title;
             title = Translate(title, type, variables, parameters, returnType);
 
             // Check if the type is sus AMOGUS!
@@ -59,14 +59,13 @@ namespace GreinerStruct.XmlWriter
         }
 
         public XmlRoot AddXmlObject<T>(T s) where T : XmlObject {
-            this.children.AddXmlObject(s);
-            this.SetInnerXml(this.children);
+            this.Children.AddXmlObject(s);
+            this.SetInnerXml(this.Children);
             return this;
         }
 
         private string Translate(string title, MethodType type, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType)
         {
-
             if (type is MethodType.Sub)
             {
                 const string inputParmsTitle = "Eingabe Parameter:";
@@ -80,7 +79,6 @@ namespace GreinerStruct.XmlWriter
 
                 if (returnType is not null)
                 {
-
                     returnParmTitle = "Rückgabe Parameter:";
                     returnParm = $" {returnType}";
                 }

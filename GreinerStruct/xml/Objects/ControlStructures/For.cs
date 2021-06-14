@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures
 {
-    class For : XmlObject
+    internal class For : XmlObject
     {
-
         private readonly QFor qFor;
 
         public For(string variableName, IntVariable startValue, IntVariable endValue, IntVariable stepConst) : base("for")
@@ -24,7 +23,6 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             this.AddAttribute("style", "COUNTER");
             this.AddAttribute("color", "ffffff");
             this.AddAttribute("disabled", "0");
-
         }
 
         public For AddXmlObject<T>(T t) where T : XmlObject
@@ -48,6 +46,5 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
                 return this;
             }
         }
-
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class Inline : XmlObject
+    internal class Inline : XmlObject
     {
         // "instruction"
         public Inline(string type, string text, string comment = "", int rotated = 0, int disable = 0) : base(type)

@@ -1,21 +1,19 @@
 ﻿using GreinerStruct.XmlWriter;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GreinerStruct.arrz
 {
-    class ArrzFile : IDisposable
+    internal class ArrzFile : IDisposable
     {
-        const string FileName = "autocreate";
+        private const string FileName = "autocreate";
 
         private readonly ZipArchive zip;
         private int Xpos, row;
-        private StringBuilder arrrrrrrrr;
+        private readonly StringBuilder arrrrrrrrr;
         public ArrzFile()
         {
             Xpos = 0;
@@ -26,17 +24,17 @@ namespace GreinerStruct.arrz
 
         public void Dispose() => zip.Dispose();
 
-        public async Task Add(StreamWriter writer, XmlRoot root)
+        public async Task Add(XmlRoot root)
         {
-            var file = $"{root.title}.nds";
+            var file = $"{root.Title}.nds";
 
-            await this.AddRootFile(writer, root);
+            await this.AddRootFile(root);
             this.SetArrrrrrrFile(file);
         }
 
-        private async Task AddRootFile(StreamWriter writer, XmlRoot root)
+        private async Task AddRootFile(XmlRoot root)
         {
-            var file = $"{root.title}.nds";
+            var file = $"{root.Title}.nds";
 
             using var openEntry = zip.CreateEntry(file).Open();
             using var stream = new StreamWriter(openEntry);
@@ -51,8 +49,8 @@ namespace GreinerStruct.arrz
                 Xpos = 1;
                 row++;
             }
-            var input = $"{Xpos * 350- 350},{row*400},\"{file}\",\"method-{Xpos}\",0,0";
-            arrrrrrrrr.Append(input+"\n");
+            var input = $"{Xpos * 350 - 350},{row * 400},\"{file}\",\"method-{Xpos}\",0,0";
+            arrrrrrrrr.Append(input + "\n");
         }
 
         public async Task WriteArrrrrrrrrFile()

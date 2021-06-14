@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class VariableAssignment : Inline
+    internal class VariableAssignment : Inline
     {
         public string Name { get; }
         public string Value { get; }

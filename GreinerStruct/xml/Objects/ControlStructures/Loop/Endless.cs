@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class Endless : LoopBase
+    internal class Endless : LoopBase
     {
         public Endless() : base("forever")
         {
