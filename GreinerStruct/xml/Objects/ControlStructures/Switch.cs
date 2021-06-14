@@ -11,15 +11,21 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
     {
         private readonly QCase[] xmlqCase;
 
-        public Switch(string value, params string[] parm) : base("case")
+        public Switch(string value, params string[] parms) : base("case")
         {
-            xmlqCase = new QCase[parm.Length];
-            for (int i = 0; i < parm.Length; i++) xmlqCase[i] = new QCase();
+            xmlqCase = new QCase[parms.Length];
+            for (int i = 0; i < parms.Length; i++)
+            {
+                xmlqCase[i] = new QCase();
+            }
             this.SetInnerXml(this.xmlqCase);
 
             var args = new StringBuilder();
             args.Append($"\"{value}\",");
-            parm.ToList().ForEach(e => args.Append($"\"{e}\","));
+            foreach (var parm in parms)
+            {
+                args.Append($"\"{parm}\",");
+            }
 
             this.AddAttribute("text", args.ToString().Substring(0, args.Length - 1));
             this.AddAttribute("comment", "");
