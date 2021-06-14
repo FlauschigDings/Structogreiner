@@ -65,13 +65,13 @@ namespace GreinerStruct
 
             var parameters = method.ParameterList.Parameters.Select(p => new VariableDeclaration(p.Identifier.Text, new Type(semanticModel.GetSymbolInfo(p.Type).Symbol.Name))).ToList();
 
-            var instructions = ParseBlock(method.Body);
+            var objects = ParseBlock(method.Body);
 
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
 
             var root = new XmlRoot(method.Identifier.Text, "", variables, parameters, returnType, type);
-            foreach (var instruction in instructions)
+            foreach (var instruction in objects)
             {
                 root.AddXmlObject(instruction);
             }
@@ -80,47 +80,63 @@ namespace GreinerStruct
 
         private static List<XmlObject> ParseBlock(SyntaxNode block)
         {
-            var instructions = new List<XmlObject>();
+            var objects = new List<XmlObject>();
             foreach (var node in block.ChildNodes())
             {
                 if (node is ForStatementSyntax fs)
                 {
-                    ParseFor(fs, instructions);
+                    ParseFor(fs, objects);
                 }
 
                 if (node is ExpressionStatementSyntax expression && expression.Expression is AssignmentExpressionSyntax assignment)
                 {
-                    ParseVariableAssignment(assignment, instructions);
+                    ParseVariableAssignment(assignment, objects);
                 }
                 if (node is LocalDeclarationStatementSyntax lvd)
                 {
-                    ParseVariableAssignment(lvd, instructions);
+                    ParseVariableAssignment(lvd, objects);
                 }
 
-                if (node is SwitchStatementSyntax ss)
+                if (node is IfStatementSyntax ifs)
                 {
-                    //var sections = ss.Sections;
-                    //new XmlSwitch(ss.Expression.ToString(), )
+                    ParseIfElse(ifs, objects);
                 }
-                if(node is ReturnStatementSyntax rs)
+                if (node is ReturnStatementSyntax rs)
                 {
-                    ParseReturn(rs, instructions);
+                    ParseReturn(rs, objects);
                 }
             }
-            return instructions;
+            return objects;
         }
 
-        private static void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> instructions)
+        private static void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)
         {
-            instructions.Add(new Return(rs.Expression.ToString()));
+            var ifElse = new IfElse(ifs.Condition.ToString());
+            foreach (var xmlObj in ParseBlock(ifs.Statement))
+            {
+                ifElse.AddXmlObject(true, xmlObj);
+            }
+            if (ifs.Else is not null)
+            {
+                foreach (var xmlObj in ParseBlock(ifs.Else))
+                {
+                    ifElse.AddXmlObject(true, xmlObj);
+                }
+            }
+            objects.Add(ifElse);
         }
 
-        private static void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> instructions)
+        private static void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> objects)
         {
-            instructions.Add(new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString()));
+            objects.Add(new Return(rs.Expression.ToString()));
         }
 
-        private static void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> instructions)
+        private static void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)
+        {
+            objects.Add(new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString()));
+        }
+
+        private static void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> objects)
         {
             foreach (var node in lvd.DescendantNodes())
             {
@@ -128,12 +144,12 @@ namespace GreinerStruct
                 {
                     var name = vd.Identifier.Text;
                     var value = vd.Initializer.Value.ToString();
-                    instructions.Add(new VariableAssignment(name, value));
+                    objects.Add(new VariableAssignment(name, value));
                 }
             }
         }
 
-        private static void ParseFor(ForStatementSyntax fs, List<XmlObject> instructions)
+        private static void ParseFor(ForStatementSyntax fs, List<XmlObject> objects)
         {
             var forVar = fs.Declaration.Variables[0];
             var forVarName = forVar.Identifier.Text;
@@ -154,12 +170,12 @@ namespace GreinerStruct
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
             };
-            var xmlFor = new For(forVarName, startValue, endValue, step);
-            foreach (var instruction in ParseBlock(fs.Statement))
+            var xmlFor = new XmlFor(forVarName, startValue, endValue, step);
+            foreach (var xmlObj in ParseBlock(fs.Statement))
             {
-                xmlFor.AddXmlObject(instruction);
+                xmlFor.AddXmlObject(xmlObj);
             }
-            instructions.Add(xmlFor);
+            objects.Add(xmlFor);
         }
 
         private static void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
