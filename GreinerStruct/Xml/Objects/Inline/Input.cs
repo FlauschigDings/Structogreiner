@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    internal class Return : Inline
+    class Input : Inline
     {
-        public Return(string text) : base("jump", $"{Program.i18n.Return()}: {text}") { }
+        public Input(string input) : base("instruction", $"{Program.i18n.Input()}: {input}") { }
     }
 }

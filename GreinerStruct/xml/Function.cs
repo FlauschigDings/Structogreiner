@@ -69,10 +69,10 @@ namespace GreinerStruct.XmlWriter
         {
             if (type is MethodType.Sub)
             {
-                const string inputParmsTitle = "Eingabe Parameter:";
+                string inputParmsTitle = $"{Program.i18n.InputParameter()}:";
                 var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
 
-                const string varsTitle = "Variable Deklarationen:";
+                string varsTitle = $"{Program.i18n.VariableDeclaration()}:";
                 var varsParam = string.Join(",", variables.Select(v => $"{v.Name}: {v.Type}"));
 
                 var returnParmTitle = "";
@@ -80,7 +80,7 @@ namespace GreinerStruct.XmlWriter
 
                 if (returnType is not null)
                 {
-                    returnParmTitle = "Rückgabe Parameter:";
+                    returnParmTitle = $"{Program.i18n.ReturnValue()}:";
                     returnParm = $" {returnType}";
                 }
 

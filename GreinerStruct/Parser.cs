@@ -1,4 +1,5 @@
-﻿using GreinerStruct.Xml.Objects.ControlStructures;
+﻿using GreinerStruct.I18n;
+using GreinerStruct.Xml.Objects.ControlStructures;
 using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.XmlWriter;
@@ -7,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +17,7 @@ namespace GreinerStruct
 {
     internal class Parser
     {
-        private I18n _language;
+        private II18n _language;
         public Parser(II18n language)
         {
             _language = language;
@@ -71,17 +73,21 @@ namespace GreinerStruct
 
             var parameters = method.ParameterList.Parameters.Select(p => new VariableDeclaration(p.Identifier.Text, new Type(semanticModel.GetSymbolInfo(p.Type).Symbol.Name))).ToList();
 
-            var objects = ParseBlock((SyntaxNode)method.Body ?? method.ExpressionBody);
-
-            var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
-            var returnType = new Type(method.ReturnType.ToString());
-
-            var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
-            foreach (var instruction in objects)
+            var block = (SyntaxNode)method.Body ?? method.ExpressionBody;
+            if (block is not null)
             {
-                root.AddXmlObject(instruction);
+                var objects = ParseBlock(block);
+
+                var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
+                var returnType = new Type(method.ReturnType.ToString());
+
+                var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
+                foreach (var instruction in objects)
+                {
+                    root.AddXmlObject(instruction);
+                }
+                methods.Add(root);
             }
-            methods.Add(root);
         }
 
         private List<XmlObject> ParseBlock(SyntaxNode block)
@@ -238,6 +244,11 @@ namespace GreinerStruct
                 {
                     var name = vd.Identifier.Text;
                     var value = vd.Initializer.Value.ToString();
+                    if(value == "Console.ReadKey()")
+                    {
+                        objects.Add(new Input(name));
+                        continue;
+                    }
                     objects.Add(new VariableAssignment(name, value));
                 }
             }
