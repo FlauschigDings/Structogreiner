@@ -44,8 +44,8 @@ namespace GreinerStruct.arrz
         // Greiner pirat
         public void SetArrrrrrrFile(string file)
         {
+            var input = $"{Xpos * 350},{5 / Xpos},\"{file}\",\"method-{Xpos}\",0,0";
             Xpos++;
-            var input = $"{Xpos * 100},{Xpos * 100},\"{file}\",\"method-{Xpos}\",0,0";
             arrrrrrrrr.Append(input+"\n");
         }
 
