@@ -1,4 +1,5 @@
 ﻿using GreinerStruct.arrz;
+using GreinerStruct.xml.Objects.ControlStructures;
 using GreinerStruct.XmlWriter;
 using GreinerStruct.XmlWriter.Instructions;
 using System;
@@ -29,14 +30,27 @@ namespace GreinerStruct
             //root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
             //ser.Serialize(writer, root.Xml());
 
-            var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
+            var roota = new XmlRoot("test", "google", new List<VariableDeclaration>(), new List<VariableDeclaration>(), Type.CreateType<int>(), MethodType.Sub);
 
-            foreach (var root in roots)
-            {
-                await arrz.Add(writer, root);
-            }
+            roota.AddXmlObject(new DoWhile("Moritz == fett").AddXmlObject(new VariableDeclaration("Nudel", Type.CreateType<double>())));
+            roota.AddXmlObject(new While("Moritz == fett").AddXmlObject(new VariableDeclaration("Nudel2", Type.CreateType<double>())));
+            roota.AddXmlObject(new Endless().AddXmlObject(new VariableDeclaration("Nudel2", Type.CreateType<double>())));
 
-            await arrz.WriteArrrrrrrrrFile();
+            //var a = new IfElse("mag kekse");
+            //a.AddXmlObject(true, new VariableDeclaration("nudel", Type.CreateType<int>()));
+            //a.AddXmlObject(false, new VariableDeclaration("moritz hat eine 6 von Illerie", Type.CreateType<string>()));
+            //var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
+
+            ////root.AddXmlObject(a);
+            ////root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
+            ser.Serialize(writer, roota.Xml());
+
+            //foreach (var root in roots)
+            //{
+            //    await arrz.Add(writer, root);
+            //}
+
+            //await arrz.WriteArrrrrrrrrFile();
         }
     }
 }
