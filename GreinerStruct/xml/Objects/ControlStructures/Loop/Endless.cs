@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class Endless : Loops
+    class Endless : LoopBase
     {
         public Endless() : base("forever")
         {
@@ -15,7 +15,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
             this.AddAttribute("disable", "0");
         }
 
-        private class QEndless : Loops.QLoops
+        private class QEndless : LoopBase.QLoops
         {
             public QEndless() : base("qForever") { }
         }

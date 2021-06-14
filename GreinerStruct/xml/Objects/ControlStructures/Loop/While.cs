@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class While : Loops
+    class While : LoopBase
     {
         public While(string ifValue) : base("while")
         {
@@ -16,7 +16,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
             this.AddAttribute("disable", "0");
         }
 
-        private class QWhile : Loops.QLoops
+        private class QWhile : LoopBase.QLoops
         {
             public QWhile() : base("qWhile") { }
         }

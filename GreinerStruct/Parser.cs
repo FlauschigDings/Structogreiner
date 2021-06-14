@@ -1,4 +1,5 @@
 ﻿using GreinerStruct.Xml.Objects.ControlStructures;
+using GreinerStruct.Xml.Objects.ControlStructures.Loop;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.XmlWriter;
 using Microsoft.Build.Locator;
@@ -6,9 +7,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GreinerStruct
@@ -105,8 +108,94 @@ namespace GreinerStruct
                 {
                     ParseReturn(rs, objects);
                 }
+                if(node is WhileStatementSyntax wh)
+                {
+                    ParseWhile(wh, objects);
+                }
+                if(node is DoStatementSyntax ds)
+                {
+                    ParseWhileDo(ds, objects);
+                }
+                if (node is ExpressionStatementSyntax expression1 && expression1.Expression is InvocationExpressionSyntax invocation)
+                {
+                    ParseMethods(invocation, objects);
+                }
+                if(node is SwitchStatementSyntax sw)
+                {
+                    ParseSwitch(sw, objects);
+                }
             }
             return objects;
+        }
+
+        private static void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
+        {
+            Console.WriteLine(sw.Expression.ToString());
+            Console.WriteLine();
+
+            var list = new List<string>();
+            var lisst = new List<string>();
+
+            foreach (var a in sw.Sections)
+            {
+                var casE = a.Labels.ToString();
+                if (casE.Contains("case")) {
+                    int from = casE.IndexOf("\"");
+                    int to = casE.LastIndexOf("\"");
+                    casE = casE.Substring(from+1, to - from-1);
+                    list.Add(casE);
+                    continue;
+                }
+                casE = casE.Substring(0, casE.Length - 1);
+                list.Add(casE);
+            }
+            var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
+            for (var i = 0; i < sw.Sections.Count; i++)
+            {
+                ParseBlock(sw.Sections[i]).ForEach(e => switchState.AddXmlObject(i, e));
+            }
+            objects.Add(switchState);
+        }
+
+        private static void ParseMethods(InvocationExpressionSyntax invocation, List<XmlObject> objects)
+        {
+            if (invocation.Expression.ToString() == "Console.WriteLine")
+            {
+                var str = invocation.ToString();
+
+                int from = str.IndexOf("(");
+                int to = str.LastIndexOf(")");
+                str = str.Substring(from+1, to - from-1);
+                objects.Add(new Output(str));
+                return;
+            }
+            var name = invocation.ToString();
+
+            // Rlly nice crystals
+            var meth = new Call(name);
+            objects.Add(meth);
+        }
+
+        private static void ParseWhileDo(DoStatementSyntax ds, List<XmlObject> objects)
+        {
+            var whileVar = new DoWhile(ds.Condition.ToString());
+            ParseBlock(ds.Statement).ForEach(e => whileVar.AddXmlObject(e));
+            objects.Add(whileVar);
+        }
+
+        private static void ParseWhile(WhileStatementSyntax wh, List<XmlObject> objects)
+        {
+            // While true
+            if (wh.Condition.ToString() == "true")
+            {
+                var endless = new Endless();
+                ParseBlock(wh.Statement).ForEach(e => endless.AddXmlObject(e));
+                objects.Add(endless);
+                return;
+            }
+            var whileVar = new While(wh.Condition.ToString());
+            ParseBlock(wh.Statement).ForEach(e => whileVar.AddXmlObject(e));
+            objects.Add(whileVar);
         }
 
         private static void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)

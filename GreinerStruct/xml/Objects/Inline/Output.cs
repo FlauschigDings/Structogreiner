@@ -8,6 +8,6 @@ namespace GreinerStruct.Xml.Objects.Inline
 {
     class Output : Inline
     {
-        public Output(string output) : base("instruction", $"AUSGABE DIALOG: \"{output}\"") { }
+        public Output(string output) : base("instruction", $"AUSGABE DIALOG: {output}") { }
     }
 }

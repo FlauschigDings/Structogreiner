@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class Loops : XmlObject
+    class LoopBase : XmlObject
     {
         protected QLoops qLoops;
 
-        public Loops(string elementname) : base(elementname) {
+        public LoopBase(string elementname) : base(elementname) {
         }
 
-        public Loops AddXmlObject<T>(T t) where T : XmlObject
+        public LoopBase AddXmlObject<T>(T t) where T : XmlObject
         {
             this.qLoops.AddXmlObject(t);
             this.SetInnerXml(this.qLoops);

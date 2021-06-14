@@ -8,7 +8,7 @@ namespace GreinerStruct.Xml.Objects.Inline
 {
     class Call : Inline
     {
-        public Call(string methodName) : base("call", $"\"{methodName}()\"") { }
+        public Call(string methodName) : base("call", methodName) { }
 
     }
 }

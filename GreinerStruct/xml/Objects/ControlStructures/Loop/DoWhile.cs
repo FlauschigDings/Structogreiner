@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
 {
-    class DoWhile : Loops
+    class DoWhile : LoopBase
     {
         public DoWhile(string ifValue) : base("repeat") {
             this.qLoops = new QDoWhile();
@@ -15,7 +15,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
             this.AddAttribute("disable", "0");
         }
 
-        private class QDoWhile : Loops.QLoops
+        private class QDoWhile : LoopBase.QLoops
         {
             public QDoWhile() : base("qRepeat") { }
         }

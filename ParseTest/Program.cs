@@ -8,6 +8,7 @@ namespace ParseTest
         {
             var greiner = "Greiner";
             var greinerGedreht = "";
+            While();
 
             for (int i = greiner.Length - 1; i >= 0; i--)
             {
@@ -15,32 +16,49 @@ namespace ParseTest
             }
         }
 
-        static string Test()
+        static string While()
         {
             var a = "dsasad";
-            var b = new string[10];
-            Console.WriteLine(a);
+            while(1 < 10)
+            {
+                a = "xxx";
+            }
             return a;
         }
 
-        static string Test2()
+        static string DoWhile()
         {
             var a = "dsasad";
-            Console.WriteLine(a);
+            do
+            {
+                a = "sfdajiosadplkdsalkdsalködsaklödsa";
+            } while (1 < 10);
             return a;
         }
 
-        static string Test3()
+        static string WhileTrue()
         {
             var a = "dsasad";
-            Console.WriteLine(a);
+            while(true)
+            {
+                a = "fsadjiosdaojpdsa";
+            }
             return a;
         }
 
-        static string Tes4()
+        static string Switch()
         {
             var a = "dsasad";
             Console.WriteLine(a);
+            switch(a) {
+                case "dsasdasdasa":
+                    a = "hallo";
+                    break;
+                case "asdsaddsadssda":
+                    break;
+                default:
+                    break;
+            }
             return a;
         }
 
