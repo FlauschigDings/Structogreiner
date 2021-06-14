@@ -29,10 +29,13 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             this.AddAttribute("disabled", "0");
         }
 
-        public Switch AddXmlObject<T>(int index, T t) where T : XmlObject
+        public Switch AddXmlObject<T>(T[] t) where T : XmlObject
         {
-            this.xmlqCase[index].AddXmlObject(t);
-            this.SetInnerXml(this.xmlqCase);
+            for (var i = 0; i < t.Length; i++)
+            {
+                this.xmlqCase[i].AddXmlObject(t[i]);
+                this.SetInnerXml(this.xmlqCase);
+            }
             return this;
         }
 

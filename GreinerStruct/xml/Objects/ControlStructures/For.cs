@@ -27,7 +27,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
 
         }
 
-        public For AddXmlObject<T>(T t) where T : XmlObject
+        public For AddXmlObject<T>(T[] t) where T : XmlObject
         {
             this.qFor.AddXmlObject(t);
             this.SetInnerXml(this.qFor);
@@ -42,9 +42,9 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
                 this.AddAttribute("color", "ffffff");
             }
 
-            public QFor AddXmlObject<T>(T t) where T : XmlObject
+            public QFor AddXmlObject<T>(T[] t) where T : XmlObject
             {
-                this.AddInnerXml(t);
+                this.SetInnerXml(t);
                 return this;
             }
         }

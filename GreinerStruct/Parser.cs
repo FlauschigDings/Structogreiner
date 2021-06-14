@@ -152,7 +152,7 @@ namespace GreinerStruct
             var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
             for (var i = 0; i < sw.Sections.Count; i++)
             {
-                ParseBlock(sw.Sections[i]).ForEach(e => switchState.AddXmlObject(i, e));
+                switchState.AddXmlObject(ParseBlock(sw.Sections[i]).ToArray());
             }
             objects.Add(switchState);
         }
@@ -260,10 +260,7 @@ namespace GreinerStruct
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
-            foreach (var xmlObj in ParseBlock(fs.Statement))
-            {
-                xmlFor.AddXmlObject(xmlObj);
-            }
+            xmlFor.AddXmlObject(ParseBlock(fs.Statement).ToArray());
             objects.Add(xmlFor);
         }
 

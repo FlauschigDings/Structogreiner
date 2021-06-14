@@ -53,8 +53,11 @@ namespace ParseTest
             switch(a) {
                 case "dsasdasdasa":
                     a = "hallo";
+                    a = "ssss";
+                    Test5();
                     break;
                 case "asdsaddsadssda":
+                    Test100();
                     break;
                 default:
                     break;
