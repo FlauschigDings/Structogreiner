@@ -18,12 +18,13 @@ namespace GreinerStruct.XmlWriter
     class XmlRoot : XmlWriter
     {
         public XmlChildren children { get; set; }
+        public string title { get; set; }
 
         public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, VariableDeclaration returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
             this.children = new XmlChildren();
             var created = DateTime.Now;
-
+            this.title = title;
             title = Translate(title, type, variables, returnType);
 
             // Check if the type is sus AMOGUS!

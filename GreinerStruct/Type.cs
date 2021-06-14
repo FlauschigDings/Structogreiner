@@ -20,6 +20,18 @@ namespace GreinerStruct
             { TypeOf<double>(), "GleitKommaZahl" },
             { TypeOf<double[]>(), "GleitKommaZahlArray" },
 
+            { TypeOf<long>(), "GleitZahl" },
+            { TypeOf<long[]>(), "GleitZahlArray" },
+
+            { TypeOf<string>(), "ZeichenKette" },
+            { TypeOf<string[]>(), "ZeichenKettenArray" },
+
+            { TypeOf<char>(), "Zeichen" },
+            { TypeOf<char[]>(), "ZeichenArray" },
+
+            { TypeOf<bool>(), "Wahr/Falsch-Wert" },
+            { TypeOf<bool[]>(), "Wahr/Falsch-WertArray" },
+
             { TypeOf<decimal>(), "" },
             { TypeOf<decimal[]>(), "" },
 
@@ -35,26 +47,11 @@ namespace GreinerStruct
             { TypeOf<nint>(), "" },
             { TypeOf<nint[]>(), "" },
 
-            //{ TypeOf<dynamic>(), "" },
-            //{ TypeOf<dynamic[]>(), "" },
-
             { TypeOf<short>(), "" },
             { TypeOf<short[]>(), "" },
 
             { TypeOf<object>(), "" },
             { TypeOf<object[]>(), "" },
-
-            { TypeOf<long>(), "GleitZahl" },
-            { TypeOf<long[]>(), "GleitZahlArray" },
-
-            { TypeOf<string>(), "ZeichenKette" },
-            { TypeOf<string[]>(), "ZeichenKettenArray" },
-
-            { TypeOf<char>(), "Zeichen" },
-            { TypeOf<char[]>(), "ZeichenArray" },
-
-            { TypeOf<bool>(), "Wahr/Falsch-Wert" },
-            { TypeOf<bool[]>(), "Wahr/Falsch-WertArray" },
 
         };
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreinerStruct.arrz;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,11 +12,15 @@ namespace GreinerStruct
     {
         static async Task Main(string[] args)
         {
+            using var arrz = new ArrzFile();
             var ser = new XmlSerializer(typeof(XmlElement));
             using var writer = new StreamWriter("sex.nsd");
-            //var root = await Parser.Parse(@$"A:\GreinerStruct\Test\Test\Test\Test.csproj");
-            var roots = await Parser.Parse(@$"C:\Users\{Environment.UserName}\source\repos\FlauschigDings\GreinerStruct\ParseTest\ParseTest.csproj");
-            ser.Serialize(writer, roots.Single().Xml());
+            var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
+
+            await arrz.Add(writer, roots.Single());
+            await arrz.Add(writer, roots.Single());
+
+            await arrz.WriteArrrrrrrrrFile();
         }
     }
 }
