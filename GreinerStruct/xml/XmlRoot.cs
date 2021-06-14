@@ -20,12 +20,12 @@ namespace GreinerStruct.XmlWriter
         public XmlChildren children { get; set; }
         public string title { get; set; }
 
-        public XmlRoot(string title, string author, ImmutableList<VariableDeclaration> variables, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
+        public XmlRoot(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
             this.children = new XmlChildren();
             var created = DateTime.Now;
             this.title = title;
-            title = Translate(title, type, variables, returnType);
+            title = Translate(title, type, variables, parameters, returnType);
 
             // Check if the type is sus AMOGUS!
 
@@ -64,16 +64,16 @@ namespace GreinerStruct.XmlWriter
             return this;
         }
 
-        private string Translate(string title, MethodType type, ImmutableList<VariableDeclaration> variables, Type returnType)
+        private string Translate(string title, MethodType type, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType)
         {
 
             if (type is MethodType.Sub)
             {
-                var inputParamTitle = "Eingabe Parameter:";
+                const string inputParmsTitle = "Eingabe Parameter:";
+                var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
 
-                var inputParam = new StringBuilder();
-
-                variables.ForEach(e => inputParam.Append($",\" {e.Name}: {e.Type}\""));
+                const string varsTitle = "Variable Deklarationen:";
+                var varsParam = string.Join(",", variables.Select(v => $"{v.Name}: {v.Type}"));
 
                 var returnParmTitle = "";
                 var returnParm = "";
@@ -82,11 +82,10 @@ namespace GreinerStruct.XmlWriter
                 {
 
                     returnParmTitle = "Rückgabe Parameter:";
-
                     returnParm = $" {returnType}";
                 }
 
-                return $"\"{title}\", \"{inputParamTitle}\", \"{inputParam}\", \"{returnParmTitle}\", \"{returnParm}\"";
+                return $"\"{title}\", \"{inputParmsTitle}\", \"{inputParms}\", \"{varsTitle}\", \"{varsParam}\", \"{returnParmTitle}\", \"{returnParm}\"";
             }
             variables.ForEach(e => this.AddXmlObject(e));
             return $"{title}";

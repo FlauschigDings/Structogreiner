@@ -19,24 +19,24 @@ namespace GreinerStruct
             using var arrz = new ArrzFile();
             var ser = new XmlSerializer(typeof(XmlElement));
             using var writer = new StreamWriter("sex.nsd");
+            //
+            //var root = new XmlRoot("test", "google", new List<VariableDeclaration>().ToImmutableList(), Type.CreateType<int>(), MethodType.Sub);
+            //var a = new IfElse("mag kekse");
+            //a.AddXmlObject(true, new VariableDeclaration("nudel", Type.CreateType<int>()));
+            //a.AddXmlObject(false, new VariableDeclaration("moritz hat eine 6 von Illerie", Type.CreateType<string>()));
+            //
+            //root.AddXmlObject(a);
+            //root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
+            //ser.Serialize(writer, root.Xml());
 
-            var root = new XmlRoot("test", "google", new List<VariableDeclaration>().ToImmutableList(), Type.CreateType<int>(), MethodType.Sub);
-            var a = new IfElse("mag kekse");
-            a.AddXmlObject(true, new VariableDeclaration("nudel", Type.CreateType<int>()));
-            a.AddXmlObject(false, new VariableDeclaration("moritz hat eine 6 von Illerie", Type.CreateType<string>()));
+            var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
 
-            root.AddXmlObject(a);
-            root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
-            ser.Serialize(writer, root.Xml());
+            foreach (var root in roots)
+            {
+                await arrz.Add(writer, root);
+            }
 
-            //var roots = await Parser.Parse(@$"../../../../ParseTest/ParseTest.csproj");
-
-            //foreach (var root in roots)
-            //{
-            //    await arrz.Add(writer, root);
-            //}
-
-            //await arrz.WriteArrrrrrrrrFile();
+            await arrz.WriteArrrrrrrrrFile();
         }
     }
 }

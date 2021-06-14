@@ -28,10 +28,11 @@ namespace ParseTest
             }
         }
 
-        void Test()
+        static string Test()
         {
             var a = "dsasad";
             Console.WriteLine(a);
+            return a;
         }
     }
 }
