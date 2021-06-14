@@ -15,12 +15,12 @@ namespace GreinerStruct.XmlWriter
         Includable
     }
 
-    internal class XmlRoot : XmlWriter
+    internal class Function : XmlWriter
     {
         public XmlChildren Children { get; set; }
         public string Title { get; set; }
 
-        public XmlRoot(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
+        public Function(string title, string author, List<VariableDeclaration> variables, List<VariableDeclaration> parameters, Type returnType = null, MethodType type = MethodType.Main, string comment = "created by GreinerStruct") : base("root")
         {
             this.Children = new XmlChildren();
             var created = DateTime.Now;
@@ -58,7 +58,7 @@ namespace GreinerStruct.XmlWriter
             this.AddAttribute("type", type.ToString().ToLower());
         }
 
-        public XmlRoot AddXmlObject<T>(T s) where T : XmlObject {
+        public Function AddXmlObject<T>(T s) where T : XmlObject {
             this.Children.AddXmlObject(s);
             this.SetInnerXml(this.Children);
             return this;

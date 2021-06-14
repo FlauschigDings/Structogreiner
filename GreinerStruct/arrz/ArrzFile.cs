@@ -24,7 +24,7 @@ namespace GreinerStruct.arrz
 
         public void Dispose() => zip.Dispose();
 
-        public async Task Add(XmlRoot root)
+        public async Task Add(Function root)
         {
             var file = $"{root.Title}.nds";
 
@@ -32,7 +32,7 @@ namespace GreinerStruct.arrz
             this.SetArrrrrrrFile(file);
         }
 
-        private async Task AddRootFile(XmlRoot root)
+        private async Task AddRootFile(Function root)
         {
             var file = $"{root.Title}.nds";
 

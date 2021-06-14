@@ -18,12 +18,12 @@ namespace GreinerStruct
 {
     internal static class Parser
     {
-        public static async Task<List<XmlRoot>> Parse(string projectFile)
+        public static async Task<List<Function>> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(projectFile);
-            var roots = new List<XmlRoot>();
+            var roots = new List<Function>();
 
             foreach (var document in project.Documents)
             {
@@ -32,12 +32,12 @@ namespace GreinerStruct
             return roots;
         }
 
-        private static async Task<List<XmlRoot>> ParseDocument(Document document)
+        private static async Task<List<Function>> ParseDocument(Document document)
         {
             var rootNode = (await document.GetSyntaxRootAsync())!;
             var semanticModel = (await document.GetSemanticModelAsync())!;
 
-            var methods = new List<XmlRoot>();
+            var methods = new List<Function>();
 
             foreach (var node in rootNode.DescendantNodes())
             {
@@ -49,7 +49,7 @@ namespace GreinerStruct
             return methods;
         }
 
-        private static void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<XmlRoot> methods)
+        private static void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<Function> methods)
         {
             var variables = new List<VariableDeclaration>();
             foreach (var node in method.DescendantNodes())
@@ -73,7 +73,7 @@ namespace GreinerStruct
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
 
-            var root = new XmlRoot(method.Identifier.Text, "", variables, parameters, returnType, type);
+            var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
             foreach (var instruction in objects)
             {
                 root.AddXmlObject(instruction);
