@@ -18,6 +18,7 @@ namespace ParseTest
         static string Test()
         {
             var a = "dsasad";
+            var b = new string[10];
             Console.WriteLine(a);
             return a;
         }

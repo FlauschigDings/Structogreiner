@@ -1,4 +1,4 @@
-﻿using GreinerStruct.XmlWriter.Instructions;
+﻿using GreinerStruct.Xml.Objects.Inline;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

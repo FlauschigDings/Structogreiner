@@ -48,7 +48,7 @@ namespace GreinerStruct.arrz
             Xpos++;
             if (Xpos % 5 == 0)
             {
-                Xpos = 0;
+                Xpos = 1;
                 row++;
             }
             var input = $"{Xpos * 350- 350},{row*400},\"{file}\",\"method-{Xpos}\",0,0";

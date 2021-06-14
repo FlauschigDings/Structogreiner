@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.xml.Objects.Inline
+namespace GreinerStruct.Xml.Objects.Inline
 {
     class Inline : XmlObject
     {

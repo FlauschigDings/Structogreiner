@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.xml.Objects.ControlStructures
+namespace GreinerStruct.Xml.Objects.ControlStructures
 {
-    class XmlSwitch : XmlObject
+    class Switch : XmlObject
     {
-        private readonly XmlqCase[] xmlqCase;
+        private readonly QCase[] xmlqCase;
 
-        public XmlSwitch(string value, params string[] parm) : base("case")
+        public Switch(string value, params string[] parm) : base("case")
         {
-            xmlqCase = new XmlqCase[parm.Length];
-            for(int i = 0; i < parm.Length;i++) xmlqCase[i] = new XmlqCase();
+            xmlqCase = new QCase[parm.Length];
+            for(int i = 0; i < parm.Length;i++) xmlqCase[i] = new QCase();
             this.SetInnerXml(this.xmlqCase);
 
             var args = new StringBuilder();
@@ -29,21 +29,21 @@ namespace GreinerStruct.xml.Objects.ControlStructures
             this.AddAttribute("disabled", "0");
         }
 
-        public XmlSwitch AddXmlObject<T>(int index, T t) where T : XmlObject
+        public Switch AddXmlObject<T>(int index, T t) where T : XmlObject
         {
             this.xmlqCase[index].AddXmlObject(t);
             this.SetInnerXml(this.xmlqCase);
             return this;
         }
 
-        private class XmlqCase : XmlObject
+        private class QCase : XmlObject
         {
-            public XmlqCase() : base("qCase")
+            public QCase() : base("qCase")
             {
                 this.AddAttribute("color", "ffffff");
             }
 
-            public XmlqCase AddXmlObject<T>(T t) where T : XmlObject
+            public QCase AddXmlObject<T>(T t) where T : XmlObject
             {
                 this.AddInnerXml(t);
                 return this;

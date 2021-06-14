@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.xml.Objects.ControlStructures
+namespace GreinerStruct.Xml.Objects.ControlStructures
 {
-    class XmlFor : XmlObject
+    class For : XmlObject
     {
 
-        private readonly XmlqFor xmlqFor;
+        private readonly QFor qFor;
 
-        public XmlFor(string variableName, IntVariable startValue, IntVariable endValue, IntVariable stepConst) : base("for")
+        public For(string variableName, IntVariable startValue, IntVariable endValue, IntVariable stepConst) : base("for")
         {
-            this.xmlqFor = new XmlqFor();
+            this.qFor = new QFor();
             this.AddAttribute("text", $"{variableName}: AW={startValue}, EW={endValue}, SW={stepConst}");
             this.AddAttribute("comment", "");
             this.AddAttribute("counterVar", variableName);
@@ -27,22 +27,22 @@ namespace GreinerStruct.xml.Objects.ControlStructures
 
         }
 
-        public XmlFor AddXmlObject<T>(T t) where T : XmlObject
+        public For AddXmlObject<T>(T t) where T : XmlObject
         {
-            this.xmlqFor.AddXmlObject(t);
-            this.SetInnerXml(this.xmlqFor);
+            this.qFor.AddXmlObject(t);
+            this.SetInnerXml(this.qFor);
             return this;
         }
 
         // idk why they do it that way 
-        private class XmlqFor : XmlObject
+        private class QFor : XmlObject
         {
-            public XmlqFor() : base("qFor") 
+            public QFor() : base("qFor") 
             {
                 this.AddAttribute("color", "ffffff");
             }
 
-            public XmlqFor AddXmlObject<T>(T t) where T : XmlObject
+            public QFor AddXmlObject<T>(T t) where T : XmlObject
             {
                 this.AddInnerXml(t);
                 return this;

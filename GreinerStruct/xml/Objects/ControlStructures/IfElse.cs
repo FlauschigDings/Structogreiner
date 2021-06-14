@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.xml.Objects.ControlStructures
+namespace GreinerStruct.Xml.Objects.ControlStructures
 {
     class IfElse : XmlObject
     {
