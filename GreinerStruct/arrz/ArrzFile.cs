@@ -12,11 +12,11 @@ namespace GreinerStruct.arrz
         private const string FileName = "autocreate";
 
         private readonly ZipArchive zip;
-        private int Xpos, row;
+        private int xPos, row;
         private readonly StringBuilder arrrrrrrrr;
         public ArrzFile()
         {
-            Xpos = 0;
+            xPos = 0;
             row = 0;
             arrrrrrrrr = new StringBuilder();
             zip = new ZipArchive(new FileStream($"./{FileName}.arrz", FileMode.Create), ZipArchiveMode.Create);
@@ -43,13 +43,13 @@ namespace GreinerStruct.arrz
         // Greiner pirat
         public void SetArrrrrrrFile(string file)
         {
-            Xpos++;
-            if (Xpos % 5 == 0)
+            xPos++;
+            if (xPos % 5 == 0)
             {
-                Xpos = 1;
+                xPos = 1;
                 row++;
             }
-            var input = $"{Xpos * 350 - 350},{row * 400},\"{file}\",\"method-{Xpos}\",0,0";
+            var input = $"{xPos * 350 - 350},{row * 400},\"{file}\",\"method-{xPos}\",0,0";
             arrrrrrrrr.Append(input + "\n");
         }
 

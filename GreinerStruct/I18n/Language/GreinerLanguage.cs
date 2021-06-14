@@ -10,7 +10,6 @@ namespace GreinerStruct.I18n.Language
     {
         public string Language() => "GreinerLang";
 
-
         public string Input() => "EINGABE DIALOG";
 
         public string Output() => "AUSGABE DIALOG";
@@ -74,6 +73,6 @@ namespace GreinerStruct.I18n.Language
             { TypeOf<object[]>(), "" },
         };
 
-        private string TypeOf<T>() => typeof(T).FullName.Split(".")[1];
+        private static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
     }
 }
