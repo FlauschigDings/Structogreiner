@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct
 {
-    internal static class Parser
+    internal class Parser
     {
         public static async Task<List<Function>> Parse(string projectFile)
         {
@@ -136,19 +136,24 @@ namespace GreinerStruct
             var list = new List<string>();
             var lisst = new List<string>();
 
-            foreach (var section in sw.Sections)
+            foreach (var a in sw.Sections)
             {
-                var label = section.Labels.ToString();
-                if (!label.Contains("case"))
+                var casE = a.Labels.ToString();
+                if (casE.Contains("case"))
                 {
-                    label = label.Substring(0, label.Length - 1);
+                    int from = casE.IndexOf("\"");
+                    int to = casE.LastIndexOf("\"");
+                    casE = casE.Substring(from + 1, to - from - 1);
+                    list.Add(casE);
+                    continue;
                 }
-                list.Add(label);
+                casE = casE.Substring(0, casE.Length - 1);
+                list.Add(casE);
             }
             var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
             for (var i = 0; i < sw.Sections.Count; i++)
             {
-                switchState.AddXmlObject(ParseBlock(sw.Sections[i]).ToArray());
+                ParseBlock(sw.Sections[i]).ForEach(e => switchState.AddXmlObject(i, e));
             }
             objects.Add(switchState);
         }
@@ -253,11 +258,13 @@ namespace GreinerStruct
             {
                 PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative(),
-                _ => throw new InvalidOperationException("The increment syntax in for loop is not supported.")
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
-            xmlFor.AddXmlObject(ParseBlock(fs.Statement).ToArray());
+            foreach (var xmlObj in ParseBlock(fs.Statement))
+            {
+                xmlFor.AddXmlObject(xmlObj);
+            }
             objects.Add(xmlFor);
         }
 

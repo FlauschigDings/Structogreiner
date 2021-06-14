@@ -25,7 +25,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             this.AddAttribute("disabled", "0");
         }
 
-        public For AddXmlObject<T>(T[] t) where T : XmlObject
+        public For AddXmlObject<T>(T t) where T : XmlObject
         {
             this.qFor.AddXmlObject(t);
             this.SetInnerXml(this.qFor);
@@ -40,9 +40,9 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
                 this.AddAttribute("color", "ffffff");
             }
 
-            public QFor AddXmlObject<T>(T[] t) where T : XmlObject
+            public QFor AddXmlObject<T>(T t) where T : XmlObject
             {
-                this.SetInnerXml(t);
+                this.AddInnerXml(t);
                 return this;
             }
         }
