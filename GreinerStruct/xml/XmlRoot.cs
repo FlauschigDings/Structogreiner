@@ -78,7 +78,6 @@ namespace GreinerStruct.XmlWriter
                 var returnParmTitle = "";
                 var returnParm = "";
 
-
                 if (returnType is not null)
                 {
 
@@ -87,10 +86,9 @@ namespace GreinerStruct.XmlWriter
                     returnParm = $" {returnType}";
                 }
 
-                return $"\"{title}\", \"{inputParamTitle}\", {inputParam}, {returnParmTitle}, {returnParm}";
-
+                return $"\"{title}\", \"{inputParamTitle}\", \"{inputParam}\", \"{returnParmTitle}\", \"{returnParm}\"";
             }
-                variables.ForEach(e => this.AddXmlObject(e));
+            variables.ForEach(e => this.AddXmlObject(e));
             return $"{title}";
         }
     }

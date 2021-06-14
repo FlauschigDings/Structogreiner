@@ -8,15 +8,30 @@ namespace GreinerStruct.XmlWriter
 {
     class While : XmlObject
     {
-        public While(string elementName) : base("while")
+
+        private readonly QWhile qWhile;
+
+
+        public While(string ifValue) : base("while")
         {
+            qWhile = new QWhile();
+            this.AddAttribute("text", $"{ifValue} (?)");
+            this.AddAttribute("commit", "");
+            this.AddAttribute("disable", "0");
         }
 
-        private class XmlqFor : XmlObject
+        public While AddXmlObject<T>(T t) where T : XmlObject
         {
-            public XmlqFor() : base("qWhile") { }
+            this.qWhile.AddXmlObject(t);
+            this.SetInnerXml(this.qWhile);
+            return this;
+        }
 
-            public XmlqFor AddXmlObject<T>(T t) where T : XmlObject
+        private class QWhile : XmlObject
+        {
+            public QWhile() : base("qWhile") { }
+
+            public QWhile AddXmlObject<T>(T t) where T : XmlObject
             {
                 this.AddInnerXml(t);
                 return this;
