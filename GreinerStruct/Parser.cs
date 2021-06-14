@@ -66,7 +66,7 @@ namespace GreinerStruct
 
             var parameters = method.ParameterList.Parameters.Select(p => new VariableDeclaration(p.Identifier.Text, new Type(semanticModel.GetSymbolInfo(p.Type).Symbol.Name))).ToList();
 
-            var objects = ParseBlock(method.Body);
+            var objects = ParseBlock((SyntaxNode)method.Body ?? method.ExpressionBody);
 
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
@@ -84,43 +84,48 @@ namespace GreinerStruct
             var objects = new List<XmlObject>();
             foreach (var node in block.ChildNodes())
             {
+                if (node is ExpressionStatementSyntax expression)
+                {
+                    if (expression.Expression is AssignmentExpressionSyntax assignment)
+                    {
+                        ParseVariableAssignment(assignment, objects);
+                    }
+                    if (expression.Expression is InvocationExpressionSyntax invocation)
+                    {
+                        ParseMethods(invocation, objects);
+                    }
+                }
+
                 if (node is ForStatementSyntax fs)
                 {
                     ParseFor(fs, objects);
                 }
-
-                if (node is ExpressionStatementSyntax expression && expression.Expression is AssignmentExpressionSyntax assignment)
+                if (node is DoStatementSyntax ds)
                 {
-                    ParseVariableAssignment(assignment, objects);
+                    ParseWhileDo(ds, objects);
                 }
-                if (node is LocalDeclarationStatementSyntax lvd)
+                if (node is WhileStatementSyntax wh)
                 {
-                    ParseVariableAssignment(lvd, objects);
+                    ParseWhile(wh, objects);
                 }
 
                 if (node is IfStatementSyntax ifs)
                 {
                     ParseIfElse(ifs, objects);
                 }
-                if (node is ReturnStatementSyntax rs)
-                {
-                    ParseReturn(rs, objects);
-                }
-                if (node is WhileStatementSyntax wh)
-                {
-                    ParseWhile(wh, objects);
-                }
-                if (node is DoStatementSyntax ds)
-                {
-                    ParseWhileDo(ds, objects);
-                }
-                if (node is ExpressionStatementSyntax expression1 && expression1.Expression is InvocationExpressionSyntax invocation)
-                {
-                    ParseMethods(invocation, objects);
-                }
                 if (node is SwitchStatementSyntax sw)
                 {
                     ParseSwitch(sw, objects);
+                }
+
+                if (node is LocalDeclarationStatementSyntax lvd)
+                {
+                    ParseVariableAssignment(lvd, objects);
+                }
+
+                if (node is ReturnStatementSyntax rs)
+                {
+                    ParseReturn(rs, objects);
                 }
             }
             return objects;
@@ -128,25 +133,21 @@ namespace GreinerStruct
 
         private static void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
         {
-            Console.WriteLine(sw.Expression.ToString());
-            Console.WriteLine();
-
             var list = new List<string>();
-            var lisst = new List<string>();
 
-            foreach (var a in sw.Sections)
+            foreach (var section in sw.Sections)
             {
-                var casE = a.Labels.ToString();
-                if (casE.Contains("case"))
+                var label = section.Labels.ToString();
+                if (label.Contains("case"))
                 {
-                    int from = casE.IndexOf("\"");
-                    int to = casE.LastIndexOf("\"");
-                    casE = casE.Substring(from + 1, to - from - 1);
-                    list.Add(casE);
+                    int from = label.IndexOf("\"");
+                    int to = label.LastIndexOf("\"");
+                    label = label.Substring(from + 1, to - from - 1);
+                    list.Add(label);
                     continue;
                 }
-                casE = casE.Substring(0, casE.Length - 1);
-                list.Add(casE);
+                label = label.Substring(0, label.Length - 1);
+                list.Add(label);
             }
             var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
             for (var i = 0; i < sw.Sections.Count; i++)
@@ -216,7 +217,7 @@ namespace GreinerStruct
 
         private static void ParseReturn(ReturnStatementSyntax rs, List<XmlObject> objects)
         {
-            objects.Add(new Return(rs.Expression.ToString()));
+            objects.Add(new Return(rs.Expression?.ToString()));
         }
 
         private static void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)

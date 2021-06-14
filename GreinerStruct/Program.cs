@@ -39,7 +39,7 @@ namespace GreinerStruct
             //var a = new IfElse("mag kekse");
             //a.AddXmlObject(true, new VariableDeclaration("nudel", Type.CreateType<int>()));
             //a.AddXmlObject(false, new VariableDeclaration("moritz hat eine 6 von Illerie", Type.CreateType<string>()));
-            var roots = await Parser.Parse("../../../../ParseTest/ParseTest.csproj");
+            var roots = await Parser.Parse("../../../../GreinerStruct/GreinerStruct.csproj");
 
             ////root.AddXmlObject(a);
             ////root.AddXmlObject(new While("greiner < illerie").AddXmlObject(a));
