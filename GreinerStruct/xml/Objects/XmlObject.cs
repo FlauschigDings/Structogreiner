@@ -8,7 +8,8 @@ namespace GreinerStruct.XmlWriter
 {
     internal class XmlObject : XmlWriter
     {
-        public XmlObject(string elementName) : base(elementName) {
+        public XmlObject(string elementName) : base(elementName)
+        {
             this.AddAttribute("color", "ffffff");
         }
     }

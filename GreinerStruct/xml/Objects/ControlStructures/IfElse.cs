@@ -28,7 +28,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
 
         public IfElse AddXmlObject<T>(bool val, T t) where T : XmlObject
         {
-            if(val) this.xmlqValue[0].AddXmlObject(t);
+            if (val) this.xmlqValue[0].AddXmlObject(t);
             else this.xmlqValue[1].AddXmlObject(t);
             this.SetInnerXml(this.xmlqValue);
             return this;

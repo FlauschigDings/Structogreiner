@@ -13,13 +13,17 @@ namespace GreinerStruct.XmlWriter
 
         public XmlWriter(string elementName) => this.xml = new XmlDocument().CreateElement(elementName);
         public void AddAttribute<T>(string key, T value) => this.xml.SetAttribute(key, value.ToString());
-        public void SetInnerXml<T>(T value) where T: XmlWriter => this.xml.InnerXml = value.XmlString();
+        public void SetInnerXml<T>(T value) where T : XmlWriter => this.xml.InnerXml = value.XmlString();
         public void AddInnerXml<T>(T value) where T : XmlWriter => this.xml.InnerXml += value.XmlString();
 
-        public void SetInnerXml<T>(T[] value) where T : XmlWriter {
+        public void SetInnerXml<T>(T[] values) where T : XmlWriter
+        {
             var val = new StringBuilder();
 
-            value.ToList().ForEach(e => val.Append(e.XmlString()));
+            foreach (var value in values)
+            {
+                val.Append(value.XmlString());
+            }
 
             this.xml.InnerXml = val.ToString();
         }

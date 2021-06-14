@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.Xml.Objects.ControlStructures.Loop
+namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
 {
     internal class LoopBase : XmlObject
     {
         protected QLoops qLoops;
 
-        public LoopBase(string elementname) : base(elementname) {
+        public LoopBase(string elementname) : base(elementname)
+        {
         }
 
         public LoopBase AddXmlObject<T>(T t) where T : XmlObject

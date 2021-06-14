@@ -1,5 +1,5 @@
 ﻿using GreinerStruct.arrz;
-using GreinerStruct.Xml.Objects.ControlStructures.Loop;
+using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.XmlWriter;
 using System;

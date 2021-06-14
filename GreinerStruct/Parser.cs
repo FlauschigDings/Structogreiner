@@ -1,5 +1,5 @@
 ﻿using GreinerStruct.Xml.Objects.ControlStructures;
-using GreinerStruct.Xml.Objects.ControlStructures.Loop;
+using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.XmlWriter;
 using Microsoft.Build.Locator;
@@ -9,9 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GreinerStruct
@@ -86,43 +84,48 @@ namespace GreinerStruct
             var objects = new List<XmlObject>();
             foreach (var node in block.ChildNodes())
             {
+                if (node is ExpressionStatementSyntax expression)
+                {
+                    if (expression.Expression is AssignmentExpressionSyntax assignment)
+                    {
+                        ParseVariableAssignment(assignment, objects);
+                    }
+                    if (expression.Expression is InvocationExpressionSyntax invocation)
+                    {
+                        ParseMethods(invocation, objects);
+                    }
+                }
+
                 if (node is ForStatementSyntax fs)
                 {
                     ParseFor(fs, objects);
                 }
-
-                if (node is ExpressionStatementSyntax expression && expression.Expression is AssignmentExpressionSyntax assignment)
+                if (node is DoStatementSyntax ds)
                 {
-                    ParseVariableAssignment(assignment, objects);
+                    ParseWhileDo(ds, objects);
                 }
-                if (node is LocalDeclarationStatementSyntax lvd)
+                if (node is WhileStatementSyntax wh)
                 {
-                    ParseVariableAssignment(lvd, objects);
+                    ParseWhile(wh, objects);
                 }
 
                 if (node is IfStatementSyntax ifs)
                 {
                     ParseIfElse(ifs, objects);
                 }
-                if (node is ReturnStatementSyntax rs)
-                {
-                    ParseReturn(rs, objects);
-                }
-                if (node is WhileStatementSyntax wh)
-                {
-                    ParseWhile(wh, objects);
-                }
-                if (node is DoStatementSyntax ds)
-                {
-                    ParseWhileDo(ds, objects);
-                }
-                if (node is ExpressionStatementSyntax expression1 && expression1.Expression is InvocationExpressionSyntax invocation)
-                {
-                    ParseMethods(invocation, objects);
-                }
                 if (node is SwitchStatementSyntax sw)
                 {
                     ParseSwitch(sw, objects);
+                }
+
+                if (node is LocalDeclarationStatementSyntax lvd)
+                {
+                    ParseVariableAssignment(lvd, objects);
+                }
+
+                if (node is ReturnStatementSyntax rs)
+                {
+                    ParseReturn(rs, objects);
                 }
             }
             return objects;
@@ -133,8 +136,7 @@ namespace GreinerStruct
             Console.WriteLine(sw.Expression.ToString());
             Console.WriteLine();
 
-            var list = new List<string>();
-            var lisst = new List<string>();
+            var labels = new List<string>();
 
             foreach (var section in sw.Sections)
             {
@@ -143,9 +145,9 @@ namespace GreinerStruct
                 {
                     label = label.Substring(0, label.Length - 1);
                 }
-                list.Add(label);
+                labels.Add(label);
             }
-            var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
+            var switchState = new Switch(sw.Expression.ToString(), labels.ToArray());
             for (var i = 0; i < sw.Sections.Count; i++)
             {
                 switchState.AddXmlObject(ParseBlock(sw.Sections[i]).ToArray());

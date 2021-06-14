@@ -10,8 +10,8 @@ namespace GreinerStruct.XmlWriter
     {
         public XmlChildren() : base("children") { }
 
-        public void AddXmlObject<T>(T s) where T: XmlObject => this.AddInnerXml(s);
+        public void AddXmlObject<T>(T s) where T : XmlObject => this.AddInnerXml(s);
 
-        public override string ToString() =>  this.XmlString();
+        public override string ToString() => this.XmlString();
     }
 }
