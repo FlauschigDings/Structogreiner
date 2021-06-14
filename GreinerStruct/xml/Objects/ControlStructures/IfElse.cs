@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures
 {
-    class IfElse : XmlObject
+    internal class IfElse : XmlObject
     {
-        XmlQValue[] xmlqValue;
+        private readonly XmlQValue[] xmlqValue;
         public IfElse(string ifValue) : base("alternative")
         {
             xmlqValue = new XmlQValue[2];
@@ -34,12 +34,11 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             return this;
         }
 
-
         private class XmlQValue : XmlObject
         {
             public XmlQValue(string elementName) : base(elementName) { }
 
-            public XmlQValue AddXmlObject<T>(T t) where T : XmlObject
+            public virtual XmlQValue AddXmlObject<T>(T t) where T : XmlObject
             {
                 this.AddInnerXml(t);
                 return this;
@@ -50,7 +49,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
         {
             public XmlqTrue() : base("qTrue") { }
 
-            public XmlqTrue AddXmlObject<T>(T t) where T : XmlObject
+            public override XmlqTrue AddXmlObject<T>(T t)
             {
                 this.AddInnerXml(t);
                 return this;
@@ -61,7 +60,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
         {
             public XmlqFalse() : base("qFalse") { }
 
-            public XmlqFalse AddXmlObject<T>(T t) where T : XmlObject
+            public override XmlqFalse AddXmlObject<T>(T t)
             {
                 this.AddInnerXml(t);
                 return this;

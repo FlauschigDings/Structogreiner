@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class Output : Inline
+    internal class Output : Inline
     {
         public Output(string output) : base("instruction", $"AUSGABE DIALOG: {output}") { }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.ControlStructures
 {
-    class Switch : XmlObject
+    internal class Switch : XmlObject
     {
         private readonly QCase[] xmlqCase;
 
@@ -20,7 +20,6 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             var args = new StringBuilder();
             args.Append($"\"{value}\",");
             parm.ToList().ForEach(e => args.Append($"\"{e}\","));
-
 
             this.AddAttribute("text", args.ToString().Substring(0, args.Length-1));
             this.AddAttribute("comment", "");
@@ -52,6 +51,5 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
                 return this;
             }
         }
-
     }
 }

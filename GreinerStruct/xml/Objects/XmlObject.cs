@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.XmlWriter
 {
-
-    class XmlObject : XmlWriter
+    internal class XmlObject : XmlWriter
     {
         public XmlObject(string elementName) : base(elementName) {
             this.AddAttribute("color", "ffffff");

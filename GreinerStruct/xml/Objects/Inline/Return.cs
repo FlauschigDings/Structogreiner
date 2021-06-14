@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class Return : Inline
+    internal class Return : Inline
     {
         public Return(string text) : base("jump", $"RückgabeWert: {text}") { }
     }

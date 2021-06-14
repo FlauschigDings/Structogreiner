@@ -16,14 +16,14 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct
 {
-    internal class Parser
+    internal static class Parser
     {
-        public static async Task<List<XmlRoot>> Parse(string projectFile)
+        public static async Task<List<Function>> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(projectFile);
-            var roots = new List<XmlRoot>();
+            var roots = new List<Function>();
 
             foreach (var document in project.Documents)
             {
@@ -32,12 +32,12 @@ namespace GreinerStruct
             return roots;
         }
 
-        private static async Task<List<XmlRoot>> ParseDocument(Document document)
+        private static async Task<List<Function>> ParseDocument(Document document)
         {
             var rootNode = (await document.GetSyntaxRootAsync())!;
             var semanticModel = (await document.GetSemanticModelAsync())!;
 
-            var methods = new List<XmlRoot>();
+            var methods = new List<Function>();
 
             foreach (var node in rootNode.DescendantNodes())
             {
@@ -49,7 +49,7 @@ namespace GreinerStruct
             return methods;
         }
 
-        private static void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<XmlRoot> methods)
+        private static void ParseMethod(MethodDeclarationSyntax method, SemanticModel semanticModel, List<Function> methods)
         {
             var variables = new List<VariableDeclaration>();
             foreach (var node in method.DescendantNodes())
@@ -73,7 +73,7 @@ namespace GreinerStruct
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
 
-            var root = new XmlRoot(method.Identifier.Text, "", variables, parameters, returnType, type);
+            var root = new Function(method.Identifier.Text, "", variables, parameters, returnType, type);
             foreach (var instruction in objects)
             {
                 root.AddXmlObject(instruction);
@@ -108,11 +108,11 @@ namespace GreinerStruct
                 {
                     ParseReturn(rs, objects);
                 }
-                if(node is WhileStatementSyntax wh)
+                if (node is WhileStatementSyntax wh)
                 {
                     ParseWhile(wh, objects);
                 }
-                if(node is DoStatementSyntax ds)
+                if (node is DoStatementSyntax ds)
                 {
                     ParseWhileDo(ds, objects);
                 }
@@ -120,7 +120,7 @@ namespace GreinerStruct
                 {
                     ParseMethods(invocation, objects);
                 }
-                if(node is SwitchStatementSyntax sw)
+                if (node is SwitchStatementSyntax sw)
                 {
                     ParseSwitch(sw, objects);
                 }
@@ -136,18 +136,14 @@ namespace GreinerStruct
             var list = new List<string>();
             var lisst = new List<string>();
 
-            foreach (var a in sw.Sections)
+            foreach (var section in sw.Sections)
             {
-                var casE = a.Labels.ToString();
-                if (casE.Contains("case")) {
-                    int from = casE.IndexOf("\"");
-                    int to = casE.LastIndexOf("\"");
-                    casE = casE.Substring(from+1, to - from-1);
-                    list.Add(casE);
-                    continue;
+                var label = section.Labels.ToString();
+                if (!label.Contains("case"))
+                {
+                    label = label.Substring(0, label.Length - 1);
                 }
-                casE = casE.Substring(0, casE.Length - 1);
-                list.Add(casE);
+                list.Add(label);
             }
             var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
             for (var i = 0; i < sw.Sections.Count; i++)
@@ -165,7 +161,7 @@ namespace GreinerStruct
 
                 int from = str.IndexOf("(");
                 int to = str.LastIndexOf(")");
-                str = str.Substring(from+1, to - from-1);
+                str = str.Substring(from + 1, to - from - 1);
                 objects.Add(new Output(str));
                 return;
             }
@@ -257,7 +253,8 @@ namespace GreinerStruct
             {
                 PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative(),
+                _ => throw new InvalidOperationException("The increment syntax in for loop is not supported.")
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
             xmlFor.AddXmlObject(ParseBlock(fs.Statement).ToArray());

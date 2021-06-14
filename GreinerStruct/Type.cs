@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct
 {
-
     internal record Type(string Name)
     {
         private static readonly Dictionary<string, string> dictionary = new()
@@ -52,7 +51,6 @@ namespace GreinerStruct
 
             { TypeOf<object>(), "" },
             { TypeOf<object[]>(), "" },
-
         };
 
         public static string TypeOf<T>() => typeof(T).FullName.Split(".")[1];
