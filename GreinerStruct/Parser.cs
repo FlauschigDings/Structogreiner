@@ -170,7 +170,7 @@ namespace GreinerStruct
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
                 AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative()
             };
-            var xmlFor = new XmlFor(forVarName, startValue, endValue, step);
+            var xmlFor = new For(forVarName, startValue, endValue, step);
             foreach (var xmlObj in ParseBlock(fs.Statement))
             {
                 xmlFor.AddXmlObject(xmlObj);
