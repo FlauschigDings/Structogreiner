@@ -1,5 +1,4 @@
-﻿using GreinerStruct.I18n;
-using GreinerStruct.Xml.Objects.ControlStructures;
+﻿using GreinerStruct.Xml.Objects.ControlStructures;
 using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
 using GreinerStruct.Xml;
@@ -17,12 +16,6 @@ namespace GreinerStruct
 {
     internal class Parser
     {
-        private II18n _language;
-        public Parser(II18n language)
-        {
-            _language = language;
-        }
-
         public async Task<List<Function>> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
@@ -34,6 +27,7 @@ namespace GreinerStruct
             {
                 roots.AddRange(await ParseDocument(document));
             }
+
             return roots;
         }
 
@@ -51,6 +45,7 @@ namespace GreinerStruct
                     ParseMethod(method, semanticModel, methods);
                 }
             }
+
             return methods;
         }
 
@@ -70,17 +65,21 @@ namespace GreinerStruct
                         if (declaration is null) break;
                         var symbolInfo = semanticModel.GetSymbolInfo(declaration.Type);
                         var varType = symbolInfo.Symbol?.Name!;
-                        variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text, new Type(varType)));
+                        variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text,
+                            new Type(varType)));
                         break;
                     }
                 }
             }
 
-            var parameters = method.ParameterList.Parameters.Select(p => new VariableDeclaration(p.Identifier.Text, new Type(semanticModel.GetSymbolInfo(p.Type).Symbol.Name))).ToList();
+            var parameters = method.ParameterList.Parameters.Select(p =>
+                    new VariableDeclaration(p.Identifier.Text,
+                        new Type(semanticModel.GetSymbolInfo(p.Type!).Symbol!.Name)))
+                .ToList();
 
-            var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
+            var block = (SyntaxNode?) method.Body ?? method.ExpressionBody;
             if (block is null) return;
-            
+
             var objects = ParseBlock(block);
 
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
@@ -91,6 +90,7 @@ namespace GreinerStruct
             {
                 root.AddXmlObject(instruction);
             }
+
             methods.Add(root);
         }
 
@@ -105,6 +105,7 @@ namespace GreinerStruct
                     {
                         ParseVariableAssignment(assignment, objects);
                     }
+
                     if (expression.Expression is InvocationExpressionSyntax invocation)
                     {
                         ParseMethods(invocation, objects);
@@ -115,10 +116,12 @@ namespace GreinerStruct
                 {
                     ParseFor(fs, objects);
                 }
+
                 if (node is DoStatementSyntax ds)
                 {
                     ParseWhileDo(ds, objects);
                 }
+
                 if (node is WhileStatementSyntax wh)
                 {
                     ParseWhile(wh, objects);
@@ -128,6 +131,7 @@ namespace GreinerStruct
                 {
                     ParseIfElse(ifs, objects);
                 }
+
                 if (node is SwitchStatementSyntax sw)
                 {
                     ParseSwitch(sw, objects);
@@ -142,11 +146,13 @@ namespace GreinerStruct
                 {
                     ParseReturn(rs, objects);
                 }
-                if(node is ForEachStatementSyntax es)
+
+                if (node is ForEachStatementSyntax es)
                 {
                     ParseForeach(es, objects);
                 }
             }
+
             return objects;
         }
 
@@ -169,27 +175,24 @@ namespace GreinerStruct
 
         private void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
         {
-            var list = new List<string>();
-
-            foreach (var section in sw.Sections)
-            {
-                var label = section.Labels.ToString();
-                if (label.Contains("case"))
+            var xmlLabels = sw.Sections.Select(section => string.Join(", ",
+                section.Labels.Select(label =>
                 {
-                    int from = label.IndexOf("\"");
-                    int to = label.LastIndexOf("\"");
-                    label = label.Substring(from + 1, to - from - 1);
-                    list.Add(label);
-                    continue;
-                }
-                label = label.Substring(0, label.Length - 1);
-                list.Add(label);
-            }
-            var switchState = new Switch(sw.Expression.ToString(), list.ToArray());
+                    var labelStr =
+                        ((label as CasePatternSwitchLabelSyntax)?.Pattern.ToString() ??
+                         (label as CaseSwitchLabelSyntax)?.Value.ToString()) ?? "default";
+                    return labelStr.Replace("\"", "\"\"");
+                }))
+            ).ToArray();
+            var switchState = new Switch(sw.Expression.ToString(), xmlLabels);
             for (var i = 0; i < sw.Sections.Count; i++)
             {
-                ParseBlock(sw.Sections[i]).ForEach(e => switchState.AddXmlObject(i, e));
+                foreach (var xmlObj in ParseBlock(sw.Sections[i]))
+                {
+                    switchState.AddXmlObject(i, xmlObj);
+                }
             }
+
             objects.Add(switchState);
         }
 
@@ -199,12 +202,13 @@ namespace GreinerStruct
             {
                 var str = invocation.ToString();
 
-                int from = str.IndexOf("(");
-                int to = str.LastIndexOf(")");
+                var from = str.IndexOf("(", StringComparison.Ordinal);
+                var to = str.LastIndexOf(")", StringComparison.Ordinal);
                 str = str.Substring(from + 1, to - from - 1);
                 objects.Add(new Output(str));
                 return;
             }
+
             var name = invocation.ToString();
 
             // Rlly nice crystals
@@ -229,6 +233,7 @@ namespace GreinerStruct
                 objects.Add(endless);
                 return;
             }
+
             var whileVar = new While(wh.Condition.ToString());
             ParseBlock(wh.Statement).ForEach(e => whileVar.AddXmlObject(e));
             objects.Add(whileVar);
@@ -241,6 +246,7 @@ namespace GreinerStruct
             {
                 ifElse.AddXmlObject(true, xmlObj);
             }
+
             if (ifs.Else is not null)
             {
                 foreach (var xmlObj in ParseBlock(ifs.Else))
@@ -248,6 +254,7 @@ namespace GreinerStruct
                     ifElse.AddXmlObject(true, xmlObj);
                 }
             }
+
             objects.Add(ifElse);
         }
 
@@ -269,11 +276,12 @@ namespace GreinerStruct
                 var name = vd.Identifier.Text;
                 if (vd.Initializer == null) continue;
                 var value = vd.Initializer.Value.ToString();
-                if(value == "Console.ReadKey()")
+                if (value == "Console.ReadKey()")
                 {
                     objects.Add(new Input(name));
                     continue;
                 }
+
                 objects.Add(new VariableAssignment(name, value));
             }
         }
@@ -283,11 +291,11 @@ namespace GreinerStruct
             if (fs.Declaration is null) return;
             var forVar = fs.Declaration.Variables[0];
             if (forVar.Initializer is null) return;
-            
+
             var forVarName = forVar.Identifier.Text;
 
             var startValue = new IntVariable(forVar.Initializer.Value.ToString());
-            var cond = (BinaryExpressionSyntax?)fs.Condition;
+            var cond = (BinaryExpressionSyntax?) fs.Condition;
             if (cond is null) return;
 
             var endValue = new IntVariable(cond.Right.ToString());
@@ -299,9 +307,14 @@ namespace GreinerStruct
             var incrementor = fs.Incrementors[0];
             var step = incrementor switch
             {
-                PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative(),
+                PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression)
+                    ? new IntVariable(1)
+                    : new IntVariable(-1),
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind
+                    .AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
+                AssignmentExpressionSyntax assignment when
+                    assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(
+                        assignment.Right.ToString()).ToNegative(),
                 _ => throw new InvalidOperationException("Unsupported incrementor.")
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
@@ -309,10 +322,12 @@ namespace GreinerStruct
             {
                 xmlFor.AddXmlObject(xmlObj);
             }
+
             objects.Add(xmlFor);
         }
 
-        private void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel, List<VariableDeclaration> variables)
+        private void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel,
+            List<VariableDeclaration> variables)
         {
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
             var type = symbolInfo.Symbol!.Name;
@@ -320,7 +335,7 @@ namespace GreinerStruct
             foreach (var node in lvd.DescendantNodes())
             {
                 if (node is not VariableDeclarationSyntax vd) continue;
-                
+
                 var name = vd.Variables[0].Identifier.Text;
                 variables.Add(new VariableDeclaration(name, new Type(type)));
             }
