@@ -142,8 +142,29 @@ namespace GreinerStruct
                 {
                     ParseReturn(rs, objects);
                 }
+                if(node is ForEachStatementSyntax es)
+                {
+                    ParseForeach(es, objects);
+                }
             }
             return objects;
+        }
+
+        private void ParseForeach(ForEachStatementSyntax es, List<XmlObject> objects)
+        {
+            //Console.WriteLine(es.Statement);
+            //Console.WriteLine(es.Identifier.ToString());
+            //Console.WriteLine(es.Expression.ToString());
+
+            //var Foreach = new For(es.Identifier.ToString(), 0, , 1); 
+
+            var xmlFor = new Foreach(es.Identifier.ToString(), es.Expression.ToString());
+            ParseBlock(es.Statement).ForEach(e =>
+            {
+                Console.WriteLine(e.XmlString());
+                xmlFor.AddXmlObject(e);
+            });
+            objects.Add(xmlFor);
         }
 
         private void ParseSwitch(SwitchStatementSyntax sw, List<XmlObject> objects)
