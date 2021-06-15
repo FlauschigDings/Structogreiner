@@ -2,7 +2,7 @@
 using GreinerStruct.Xml.Objects.ControlStructures;
 using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
-using GreinerStruct.XmlWriter;
+using GreinerStruct.Xml;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

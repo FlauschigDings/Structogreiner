@@ -1,11 +1,11 @@
-﻿using GreinerStruct.XmlWriter;
+﻿using GreinerStruct.Xml;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreinerStruct.arrz
+namespace GreinerStruct.Arrz
 {
     internal class ArrzFile : IDisposable
     {
