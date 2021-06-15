@@ -1,9 +1,9 @@
-﻿using GreinerStruct.arrz;
+﻿using GreinerStruct.Arrz;
 using GreinerStruct.I18n;
 using GreinerStruct.I18n.Language;
 using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
-using GreinerStruct.XmlWriter;
+using GreinerStruct.Xml;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
