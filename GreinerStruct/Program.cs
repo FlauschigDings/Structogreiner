@@ -22,8 +22,7 @@ namespace GreinerStruct
 
         private static async Task Main(string[] args)
         {
-            var a = Console.ReadKey();
-            var i18n = new GreinerLanguage();
+            i18n = new GreinerLanguage();
             using var arrz = new ArrzFile();
             var ser = new XmlSerializer(typeof(XmlElement));
             using var writer = new StreamWriter("sex.nsd");
