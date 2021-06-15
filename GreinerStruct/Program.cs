@@ -27,9 +27,9 @@ namespace GreinerStruct
             var ser = new XmlSerializer(typeof(XmlElement));
             using var writer = new StreamWriter("sex.nsd");
 
-            var parser = new Parser(i18n);
+            var parser = new Parser();
 
-            var roots = await parser.Parse("../../../../GreinerStruct/GreinerStruct.csproj");
+            var roots = await parser.Parse("../../../../ParseTest/ParseTest.csproj");
 
             foreach (var root in roots)
             {
