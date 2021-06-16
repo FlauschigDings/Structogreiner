@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.I18n.Language
 {
-    class GreinerLanguage : II18n
+    internal class GreinerLanguage : II18n
     {
         public string Language() => "GreinerLang";
 

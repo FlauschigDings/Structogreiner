@@ -6,6 +6,10 @@ namespace ParseTest
     {
         static void Main(string[] args)
         {
+            var arr = new int[] { 2, 5, -1, 9, 4, 6, 123, 100 };
+            Sort(arr);
+            Console.WriteLine(string.Join(", ", arr));
+
             var greiner = "Greiner";
             var greinerGedreht = "";
             While();
@@ -19,7 +23,7 @@ namespace ParseTest
         static string While()
         {
             var a = "dsasad";
-            while(1 < 10)
+            while (1 < 10)
             {
                 a = "xxx";
             }
@@ -39,7 +43,7 @@ namespace ParseTest
         static string WhileTrue()
         {
             var a = "dsasad";
-            while(true)
+            while (true)
             {
                 a = "fsadjiosdaojpdsa";
             }
@@ -50,7 +54,8 @@ namespace ParseTest
         {
             var a = "dsasad";
             Console.WriteLine(a);
-            switch(a) {
+            switch (a)
+            {
                 case "dsasdasdasa":
                     a = "hallo";
                     a = "ssss";
@@ -83,6 +88,20 @@ namespace ParseTest
             var a = "dsasad";
             Console.WriteLine(a);
             return a;
+        }
+
+        static void Sort(int[] numbers)
+        {
+            for (var i = 1; i < numbers.Length; i++)
+            {
+                while (numbers[i - 1] > numbers[i])
+                {
+                    var temp = numbers[i - 1];
+                    numbers[i - 1] = numbers[i];
+                    numbers[i] = temp;
+                    if (i > 1) i --;
+                }
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.I18n
 {
-    interface II18n : II18nLanguage
+    internal interface II18n : II18nLanguage
     {
         // Inline
         string Input();
@@ -27,7 +27,7 @@ namespace GreinerStruct.I18n
 
     }
 
-    interface II18nLanguage
+    internal interface II18nLanguage
     {
         string Language();
     }

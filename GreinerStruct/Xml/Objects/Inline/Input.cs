@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreinerStruct.Xml.Objects.Inline
 {
-    class Input : Inline
+    internal class Input : Inline
     {
         public Input(string input) : base("instruction", $"{Program.i18n.Input()}: {input}") { }
     }

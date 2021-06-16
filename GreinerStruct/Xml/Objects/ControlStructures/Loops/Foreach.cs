@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
 {
 
-    class Foreach : XmlObject
+    internal class Foreach : XmlObject
     {
         private readonly QForeach qFor;
 

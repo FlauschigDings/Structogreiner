@@ -1,7 +1,7 @@
-﻿using GreinerStruct.Xml.Objects.ControlStructures;
+﻿using GreinerStruct.Xml;
+using GreinerStruct.Xml.Objects.ControlStructures;
 using GreinerStruct.Xml.Objects.ControlStructures.Loops;
 using GreinerStruct.Xml.Objects.Inline;
-using GreinerStruct.Xml;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -60,27 +60,28 @@ namespace GreinerStruct
                         ParseVariables(lvd, semanticModel, variables);
                         break;
                     case ForStatementSyntax fs:
-                    {
-                        var declaration = fs.Declaration;
-                        if (declaration is null) break;
-                        var symbolInfo = semanticModel.GetSymbolInfo(declaration.Type);
-                        var varType = symbolInfo.Symbol?.Name!;
-                        variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text,
-                            new Type(varType)));
-                        break;
-                    }
+                        {
+                            var declaration = fs.Declaration;
+                            if (declaration is null) break;
+                            var symbolInfo = semanticModel.GetSymbolInfo(declaration.Type);
+                            var varType = symbolInfo.Symbol?.Name!;
+                            variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text,
+                                new Type(varType)));
+                            break;
+                        }
                 }
             }
 
             var parameters = method.ParameterList.Parameters.Select(p =>
-                    new VariableDeclaration(p.Identifier.Text,
-                        new Type(semanticModel.GetSymbolInfo(p.Type!).Symbol!.Name)))
-                .ToList();
+            {
+                var symbolInfo = semanticModel.GetSymbolInfo(p.Type!);
+                return new VariableDeclaration(p.Identifier.Text, new Type(symbolInfo.Symbol!.ToString()));
+            }).ToList();
 
-            var block = (SyntaxNode?) method.Body ?? method.ExpressionBody;
+            var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
             if (block is null) return;
 
-            var objects = ParseBlock(block);
+            var objects = ParseNode(block);
 
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
@@ -94,63 +95,77 @@ namespace GreinerStruct
             methods.Add(root);
         }
 
-        private List<XmlObject> ParseBlock(SyntaxNode block)
+        private void ParseBlock(SyntaxNode block, List<XmlObject> objects)
         {
-            var objects = new List<XmlObject>();
             foreach (var node in block.ChildNodes())
             {
-                if (node is ExpressionStatementSyntax expression)
-                {
-                    if (expression.Expression is AssignmentExpressionSyntax assignment)
-                    {
-                        ParseVariableAssignment(assignment, objects);
-                    }
+                objects.AddRange(ParseNode(node));
+            }
+        }
 
-                    if (expression.Expression is InvocationExpressionSyntax invocation)
-                    {
-                        ParseMethods(invocation, objects);
-                    }
-                }
+        private List<XmlObject> ParseNode(SyntaxNode node)
+        {
+            var objects = new List<XmlObject>();
 
-                if (node is ForStatementSyntax fs)
+            if (node is ExpressionStatementSyntax expression)
+            {
+                if (expression.Expression is AssignmentExpressionSyntax assignment)
                 {
-                    ParseFor(fs, objects);
+                    ParseVariableAssignment(assignment, objects);
                 }
+                else if (expression.Expression is InvocationExpressionSyntax invocation)
+                {
+                    ParseMethods(invocation, objects);
+                }
+                else
+                {
+                    objects.Add(new Input(expression.Expression.ToString()));
+                }
+            }
 
-                if (node is DoStatementSyntax ds)
-                {
-                    ParseWhileDo(ds, objects);
-                }
+            if (node is ForStatementSyntax fs)
+            {
+                ParseFor(fs, objects);
+            }
 
-                if (node is WhileStatementSyntax wh)
-                {
-                    ParseWhile(wh, objects);
-                }
+            if (node is DoStatementSyntax ds)
+            {
+                ParseWhileDo(ds, objects);
+            }
 
-                if (node is IfStatementSyntax ifs)
-                {
-                    ParseIfElse(ifs, objects);
-                }
+            if (node is WhileStatementSyntax wh)
+            {
+                ParseWhile(wh, objects);
+            }
 
-                if (node is SwitchStatementSyntax sw)
-                {
-                    ParseSwitch(sw, objects);
-                }
+            if (node is IfStatementSyntax ifs)
+            {
+                ParseIfElse(ifs, objects);
+            }
 
-                if (node is LocalDeclarationStatementSyntax lvd)
-                {
-                    ParseVariableAssignment(lvd, objects);
-                }
+            if (node is SwitchStatementSyntax sw)
+            {
+                ParseSwitch(sw, objects);
+            }
 
-                if (node is ReturnStatementSyntax rs)
-                {
-                    ParseReturn(rs, objects);
-                }
+            if (node is LocalDeclarationStatementSyntax lvd)
+            {
+                ParseVariableAssignment(lvd, objects);
+            }
 
-                if (node is ForEachStatementSyntax es)
-                {
-                    ParseForeach(es, objects);
-                }
+            if (node is ReturnStatementSyntax rs)
+            {
+                ParseReturn(rs, objects);
+            }
+
+            if (node is ForEachStatementSyntax es)
+            {
+                ParseForeach(es, objects);
+            }
+
+            if (node is BlockSyntax block)
+            {
+                ParseBlock(block, objects);
             }
 
             return objects;
@@ -165,7 +180,7 @@ namespace GreinerStruct
             //var Foreach = new For(es.Identifier.ToString(), 0, , 1); 
 
             var xmlFor = new Foreach(es.Identifier.ToString(), es.Expression.ToString());
-            ParseBlock(es.Statement).ForEach(e =>
+            ParseNode(es.Statement).ForEach(e =>
             {
                 Console.WriteLine(e.XmlString());
                 xmlFor.AddXmlObject(e);
@@ -187,7 +202,7 @@ namespace GreinerStruct
             var switchState = new Switch(sw.Expression.ToString(), xmlLabels);
             for (var i = 0; i < sw.Sections.Count; i++)
             {
-                foreach (var xmlObj in ParseBlock(sw.Sections[i]))
+                foreach (var xmlObj in ParseNode(sw.Sections[i]))
                 {
                     switchState.AddXmlObject(i, xmlObj);
                 }
@@ -219,7 +234,7 @@ namespace GreinerStruct
         private void ParseWhileDo(DoStatementSyntax ds, List<XmlObject> objects)
         {
             var whileVar = new DoWhile(ds.Condition.ToString());
-            ParseBlock(ds.Statement).ForEach(e => whileVar.AddXmlObject(e));
+            ParseNode(ds.Statement).ForEach(e => whileVar.AddXmlObject(e));
             objects.Add(whileVar);
         }
 
@@ -229,27 +244,27 @@ namespace GreinerStruct
             if (wh.Condition.ToString() == "true")
             {
                 var endless = new Endless();
-                ParseBlock(wh.Statement).ForEach(e => endless.AddXmlObject(e));
+                ParseNode(wh.Statement).ForEach(e => endless.AddXmlObject(e));
                 objects.Add(endless);
                 return;
             }
 
             var whileVar = new While(wh.Condition.ToString());
-            ParseBlock(wh.Statement).ForEach(e => whileVar.AddXmlObject(e));
+            ParseNode(wh.Statement).ForEach(e => whileVar.AddXmlObject(e));
             objects.Add(whileVar);
         }
 
         private void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)
         {
             var ifElse = new IfElse(ifs.Condition.ToString());
-            foreach (var xmlObj in ParseBlock(ifs.Statement))
+            foreach (var xmlObj in ParseNode(ifs.Statement))
             {
                 ifElse.AddXmlObject(true, xmlObj);
             }
 
             if (ifs.Else is not null)
             {
-                foreach (var xmlObj in ParseBlock(ifs.Else))
+                foreach (var xmlObj in ParseNode(ifs.Else))
                 {
                     ifElse.AddXmlObject(true, xmlObj);
                 }
@@ -295,7 +310,7 @@ namespace GreinerStruct
             var forVarName = forVar.Identifier.Text;
 
             var startValue = new IntVariable(forVar.Initializer.Value.ToString());
-            var cond = (BinaryExpressionSyntax?) fs.Condition;
+            var cond = (BinaryExpressionSyntax?)fs.Condition;
             if (cond is null) return;
 
             var endValue = new IntVariable(cond.Right.ToString());
@@ -307,18 +322,13 @@ namespace GreinerStruct
             var incrementor = fs.Incrementors[0];
             var step = incrementor switch
             {
-                PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression)
-                    ? new IntVariable(1)
-                    : new IntVariable(-1),
-                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind
-                    .AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
-                AssignmentExpressionSyntax assignment when
-                    assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(
-                        assignment.Right.ToString()).ToNegative(),
+                PostfixUnaryExpressionSyntax => incrementor.IsKind(SyntaxKind.PostIncrementExpression) ? new IntVariable(1) : new IntVariable(-1),
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.AddAssignmentExpression) => new IntVariable(assignment.Right.ToString()),
+                AssignmentExpressionSyntax assignment when assignment.OperatorToken.IsKind(SyntaxKind.SubtractAssignmentExpression) => new IntVariable(assignment.Right.ToString()).ToNegative(),
                 _ => throw new InvalidOperationException("Unsupported incrementor.")
             };
             var xmlFor = new For(forVarName, startValue, endValue, step);
-            foreach (var xmlObj in ParseBlock(fs.Statement))
+            foreach (var xmlObj in ParseNode(fs.Statement))
             {
                 xmlFor.AddXmlObject(xmlObj);
             }
