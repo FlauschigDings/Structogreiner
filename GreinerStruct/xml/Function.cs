@@ -69,10 +69,10 @@ namespace GreinerStruct.Xml
         {
             if (type is MethodType.Sub)
             {
-                var inputParmsTitle = $"{Program.i18n.InputParameter()}:";
+                var inputParmsTitle = $"{Program.I18n.InputParameter()}:";
                 var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
 
-                var varsTitle = $"{Program.i18n.VariableDeclaration()}:";
+                var varsTitle = $"{Program.I18n.VariableDeclaration()}:";
                 var varsParam = string.Join(",", variables.Select(v => $"{v.Name}: {v.Type}"));
 
                 var returnParmTitle = "";
@@ -80,7 +80,7 @@ namespace GreinerStruct.Xml
 
                 if (returnType is not null)
                 {
-                    returnParmTitle = $"{Program.i18n.ReturnValue()}:";
+                    returnParmTitle = $"{Program.I18n.ReturnValue()}:";
                     returnParm = $" {returnType}";
                 }
 
