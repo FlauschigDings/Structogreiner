@@ -51,26 +51,26 @@ namespace GreinerStruct.I18n.Language
             { TypeOf<bool>(), "Wahr/Falsch-Wert" },
             { TypeOf<bool[]>(), "Wahr/Falsch-WertArray" },
 
-            { TypeOf<decimal>(), "" },
-            { TypeOf<decimal[]>(), "" },
+            { TypeOf<decimal>(), "GleitkommaZahl" },
+            { TypeOf<decimal[]>(), "GleitkommaZahlrray" },
 
-            { TypeOf<byte>(), "" },
-            { TypeOf<byte[]>(), "" },
+            { TypeOf<byte>(), "GanzZahl" },
+            { TypeOf<byte[]>(), "GanzZahlenArray" },
 
-            { TypeOf<sbyte>(), "" },
-            { TypeOf<sbyte[]>(), "" },
+            { TypeOf<sbyte>(), "GanzZahl" },
+            { TypeOf<sbyte[]>(), "GanzZahlenArray" },
 
-            { TypeOf<nuint>(), "" },
-            { TypeOf<nuint[]>(), "" },
+            { TypeOf<nuint>(), "GanzZahl" },
+            { TypeOf<nuint[]>(), "GanzZahlenArray" },
 
-            { TypeOf<nint>(), "" },
-            { TypeOf<nint[]>(), "" },
+            { TypeOf<nint>(), "GanzZahl" },
+            { TypeOf<nint[]>(), "GanzZahlenArray" },
 
-            { TypeOf<short>(), "" },
-            { TypeOf<short[]>(), "" },
+            { TypeOf<short>(), "GanzZahl" },
+            { TypeOf<short[]>(), "GanzZahlenArray" },
 
-            { TypeOf<object>(), "" },
-            { TypeOf<object[]>(), "" },
+            { TypeOf<object>(), "Objekt" },
+            { TypeOf<object[]>(), "ObjektArray" },
         };
 
         private static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
