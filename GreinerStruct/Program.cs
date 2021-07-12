@@ -17,19 +17,16 @@ namespace GreinerStruct
 {
     internal static class Program
     {
-
-        public static II18n i18n;
+        public static II18n I18n { get; } = new GreinerLanguage();
 
         private static async Task Main(string[] args)
         {
-            i18n = new GreinerLanguage();
-            using var arrz = new ArrzFile();
-            var ser = new XmlSerializer(typeof(XmlElement));
-            using var writer = new StreamWriter("sex.nsd");
+            var projectFile = args.Length >= 1 ? args[0] : PromptProjectFile();
 
             var parser = new Parser();
+            var roots = await parser.Parse(projectFile);
 
-            var roots = await parser.Parse("../../../../ParseTest/ParseTest.csproj");
+            using var arrz = new ArrzFile("output.arrz");
 
             foreach (var root in roots)
             {
@@ -37,6 +34,12 @@ namespace GreinerStruct
             }
 
             await arrz.WriteArrrrrrrrrFile();
+        }
+
+        private static string PromptProjectFile()
+        {
+            Console.Write("Projektdatei (csproj): ");
+            return Console.ReadLine()!;
         }
     }
 }

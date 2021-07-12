@@ -9,17 +9,18 @@ namespace GreinerStruct.Arrz
 {
     internal class ArrzFile : IDisposable
     {
-        private const string FileName = "autocreate";
-
         private readonly ZipArchive zip;
         private int xPos, row;
         private readonly StringBuilder arrrrrrrrr;
-        public ArrzFile()
+        private readonly string fileName;
+
+        public ArrzFile(string fileName)
         {
             xPos = 0;
             row = 0;
+            this.fileName = fileName;
             arrrrrrrrr = new StringBuilder();
-            zip = new ZipArchive(new FileStream($"./{FileName}.arrz", FileMode.Create), ZipArchiveMode.Create);
+            zip = new ZipArchive(new FileStream(fileName, FileMode.Create), ZipArchiveMode.Create);
         }
 
         public void Dispose() => zip.Dispose();
@@ -55,7 +56,7 @@ namespace GreinerStruct.Arrz
 
         public async Task WriteArrrrrrrrrFile()
         {
-            using var openEntry = zip.CreateEntry($"{FileName}.arr").Open();
+            using var openEntry = zip.CreateEntry($"{fileName}.arr").Open();
             using var stream = new StreamWriter(openEntry);
 
             await stream.WriteAsync(arrrrrrrrr.ToString());
