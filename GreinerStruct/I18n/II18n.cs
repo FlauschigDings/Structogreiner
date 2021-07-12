@@ -9,9 +9,9 @@ namespace GreinerStruct.I18n
     internal interface II18n : II18nLanguage
     {
         // Inline
-        string Input();
-        string Output();
-        string Return();
+        string Input(string input);
+        string Output(string output);
+        string Return(string text);
 
         // Function Translate
         string InputParameter();
@@ -19,16 +19,33 @@ namespace GreinerStruct.I18n
         string ReturnValue();
 
         // For
-        string ForStartValue();
-        string ForEndValue();
-        string ForStepConst();
+        string For(
+            string variableName,
+            IntVariable startValue,
+            IntVariable endValue,
+            IntVariable stepConst
+            );
 
-        Dictionary<string, string> Mappings();
+        string Foreach(
+            string variableName,
+            string array
+            );
+
+        string If(string ifValue);
+        string VariableAssignment(string name, string value);
+        string VariableDeclaration(string name, Type type);
+
+        string While(string ifValue);
+
+        string DoWhile(string ifValue);
 
     }
 
     internal interface II18nLanguage
     {
         string Language();
+
+        Dictionary<string, string> Mappings();
+
     }
 }

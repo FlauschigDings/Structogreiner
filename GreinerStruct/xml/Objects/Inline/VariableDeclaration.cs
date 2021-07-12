@@ -11,12 +11,12 @@ namespace GreinerStruct.Xml.Objects.Inline
         public string Name { get; }
         public Type Type { get; }
 
-        public VariableDeclaration(string name, Type type) : base("instruction", $"{name}: {type}")
+        public VariableDeclaration(string name, Type type) : base("instruction", Program.I18n.VariableDeclaration(name, type))
         {
             Name = name;
             Type = type;
         }
 
-        public override string ToString() => $"{Name}: {Type}";
+        public override string ToString() => Program.I18n.VariableDeclaration(Name, Type);
     }
 }

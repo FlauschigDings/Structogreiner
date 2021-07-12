@@ -8,6 +8,6 @@ namespace GreinerStruct.Xml.Objects.Inline
 {
     internal class Output : Inline
     {
-        public Output(string output) : base("instruction", $"{Program.I18n.Output()}: {output}") { }
+        public Output(string output) : base("instruction", Program.I18n.Output(output)) { }
     }
 }

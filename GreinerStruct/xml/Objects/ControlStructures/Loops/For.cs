@@ -11,10 +11,22 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
     {
         private readonly QFor qFor;
 
-        public For(string variableName, IntVariable startValue, IntVariable endValue, IntVariable stepConst) : base("for")
+        public For(
+            string variableName,
+            IntVariable startValue,
+            IntVariable endValue,
+            IntVariable stepConst
+        ) : base("for")
         {
             this.qFor = new QFor();
-            this.AddAttribute("text", $"{variableName}: {Program.I18n.ForStartValue()}={startValue}, {Program.I18n.ForEndValue()}={endValue}, {Program.I18n.ForStepConst()}={stepConst}");
+            String forText = Program.I18n.For(
+                variableName,
+                startValue,
+                endValue,
+                stepConst
+                );
+
+            this.AddAttribute("text", forText);
             this.AddAttribute("comment", "");
             this.AddAttribute("counterVar", variableName);
             this.AddAttribute("startValue", startValue);

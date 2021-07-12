@@ -14,7 +14,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
         public Foreach(string variableName, string array) : base("for")
         {
             this.qFor = new QForeach();
-            this.AddAttribute("text", $"{variableName}: {Program.I18n.ForStartValue()}={1}, {Program.I18n.ForEndValue()}={$"{array}.Length"}, {Program.I18n.ForStepConst()}={1}");
+            this.AddAttribute("text", Program.I18n.Foreach(variableName, array));
             this.AddAttribute("comment", "");
             this.AddAttribute("counterVar", variableName);
             this.AddAttribute("startValue", 1);

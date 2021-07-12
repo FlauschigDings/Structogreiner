@@ -11,7 +11,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
         public DoWhile(string ifValue) : base("repeat")
         {
             this.qLoops = new QDoWhile();
-            this.AddAttribute("text", $"{ifValue} (?)");
+            this.AddAttribute("text", Program.I18n.DoWhile(ifValue));
             this.AddAttribute("commit", "");
             this.AddAttribute("disable", "0");
         }

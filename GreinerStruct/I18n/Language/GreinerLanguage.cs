@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GreinerStruct.I18n.Language
 {
@@ -10,11 +6,11 @@ namespace GreinerStruct.I18n.Language
     {
         public string Language() => "GreinerLang";
 
-        public string Input() => "EINGABE DIALOG";
+        public string Input(string input) => $"EINGABE DIALOG: {input}";
 
-        public string Output() => "AUSGABE DIALOG";
+        public string Output(string output) => $"AUSGABE DIALOG: {output}";
 
-        public string Return() => "RückgabeWert";
+        public string Return(string text) => $"RückgabeWert: {text}";
 
         public string InputParameter() => "Eingabe Parameter";
 
@@ -22,11 +18,19 @@ namespace GreinerStruct.I18n.Language
 
         public string ReturnValue() => "Rückgabe Parameter";
 
-        public string ForStartValue() => "AW";
+        public string If(string ifValue) => $"{ifValue} ?";
 
-        public string ForEndValue() => "EW";
+        public string For(
+            string variableName,
+            IntVariable startValue,
+            IntVariable endValue,
+            IntVariable stepConst
+            ) => $"{variableName}: AW={startValue}, EW={endValue}, SW={stepConst}";
 
-        public string ForStepConst() => "SW";
+        public string Foreach(
+            string variableName,
+            string array
+            ) => $"{variableName}:  AW={1}, EW={$"{array}.Length"}, SW={1}";
 
         public Dictionary<string, string> Mappings() => new()
         {
@@ -72,7 +76,14 @@ namespace GreinerStruct.I18n.Language
             { TypeOf<object>(), "" },
             { TypeOf<object[]>(), "" },
         };
+        public string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
 
-        private static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
+        public string VariableAssignment(string name, string value) => $"{name} <- {value}";
+
+        public string VariableDeclaration(string name, Type type) => $"{name}: {type}";
+
+        public string While(string ifValue) => $"{ifValue} (?)";
+
+        public string DoWhile(string ifValue) => this.While(ifValue);
     }
 }
