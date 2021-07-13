@@ -9,7 +9,7 @@ namespace Structogreiner.Xml.Objects.ControlStructures.Loops
 {
     internal class LoopBase : XmlObject
     {
-        protected QLoops qLoops;
+        protected QLoops? qLoops;
 
         public LoopBase(string elementname) : base(elementname)
         {
@@ -17,6 +17,8 @@ namespace Structogreiner.Xml.Objects.ControlStructures.Loops
 
         public LoopBase AddXmlObject<T>(T t) where T : XmlObject
         {
+            if (qLoops is null) throw new InvalidOperationException("qLoops is null");
+            
             this.qLoops.AddXmlObject(t);
             this.SetInnerXml(this.qLoops);
             return this;

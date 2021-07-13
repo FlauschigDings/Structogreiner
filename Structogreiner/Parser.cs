@@ -75,7 +75,7 @@ namespace Structogreiner
             var parameters = method.ParameterList.Parameters.Select(p =>
             {
                 var symbolInfo = semanticModel.GetSymbolInfo(p.Type!);
-                return new VariableDeclaration(p.Identifier.Text, new Type(symbolInfo.Symbol!.ToString()));
+                return new VariableDeclaration(p.Identifier.Text, new Type(symbolInfo.Symbol?.ToString()!));
             }).ToList();
 
             var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
@@ -211,7 +211,7 @@ namespace Structogreiner
             objects.Add(switchState);
         }
 
-        private void ParseMethods(InvocationExpressionSyntax invocation, List<XmlObject> objects)
+        private void ParseMethods(InvocationExpressionSyntax invocation, ICollection<XmlObject> objects)
         {
             if (invocation.Expression.ToString() == "Console.WriteLine")
             {
@@ -231,7 +231,7 @@ namespace Structogreiner
             objects.Add(meth);
         }
 
-        private void ParseWhileDo(DoStatementSyntax ds, List<XmlObject> objects)
+        private void ParseWhileDo(DoStatementSyntax ds, ICollection<XmlObject> objects)
         {
             var whileVar = new DoWhile(ds.Condition.ToString());
             ParseNode(ds.Statement).ForEach(e => whileVar.AddXmlObject(e));
@@ -283,7 +283,7 @@ namespace Structogreiner
             objects.Add(new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString()));
         }
 
-        private void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, List<XmlObject> objects)
+        private void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, ICollection<XmlObject> objects)
         {
             foreach (var node in lvd.DescendantNodes())
             {
@@ -337,7 +337,7 @@ namespace Structogreiner
         }
 
         private void ParseVariables(LocalDeclarationStatementSyntax lvd, SemanticModel semanticModel,
-            List<VariableDeclaration> variables)
+            ICollection<VariableDeclaration> variables)
         {
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
             var type = symbolInfo.Symbol!.Name;

@@ -37,8 +37,8 @@ namespace Structogreiner.Arrz
         {
             var file = $"{root.Title}.nds";
 
-            using var openEntry = zip.CreateEntry(file).Open();
-            using var stream = new StreamWriter(openEntry);
+            await using var openEntry = zip.CreateEntry(file).Open();
+            await using var stream = new StreamWriter(openEntry);
             await stream.WriteAsync(root.XmlString());
         }
         // Greiner pirat
@@ -56,8 +56,8 @@ namespace Structogreiner.Arrz
 
         public async Task WriteArrrrrrrrrFile()
         {
-            using var openEntry = zip.CreateEntry($"{fileName}.arr").Open();
-            using var stream = new StreamWriter(openEntry);
+            await using var openEntry = zip.CreateEntry($"{fileName}.arr").Open();
+            await using var stream = new StreamWriter(openEntry);
 
             await stream.WriteAsync(arrrrrrrrr.ToString());
         }
