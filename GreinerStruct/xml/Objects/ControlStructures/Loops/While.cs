@@ -11,7 +11,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures.Loops
         public While(string ifValue) : base("while")
         {
             this.qLoops = new QWhile();
-            this.AddAttribute("text", $"{ifValue} (?)");
+            this.AddAttribute("text", Program.I18n.While(ifValue));
             this.AddAttribute("commit", "");
             this.AddAttribute("disable", "0");
         }

@@ -1,11 +1,4 @@
-﻿using GreinerStruct.Xml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreinerStruct.Xml.Objects.ControlStructures
+﻿namespace GreinerStruct.Xml.Objects.ControlStructures
 {
     internal class IfElse : XmlObject
     {
@@ -19,7 +12,7 @@ namespace GreinerStruct.Xml.Objects.ControlStructures
             xmlqValue[0] = xmlqTrue;
             xmlqValue[1] = xmlqFalse;
 
-            this.AddAttribute("text", $"{ifValue} ?");
+            this.AddAttribute("text", Program.I18n.If(ifValue));
             this.AddAttribute("comment", "");
             this.AddAttribute("disabled", "0");
 

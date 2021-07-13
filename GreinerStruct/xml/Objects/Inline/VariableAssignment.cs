@@ -11,7 +11,7 @@ namespace GreinerStruct.Xml.Objects.Inline
         public string Name { get; }
         public string Value { get; }
 
-        public VariableAssignment(string name, string value) : base("instruction", $"{name} <- {value}")
+        public VariableAssignment(string name, string value) : base("instruction", Program.I18n.VariableAssignment(name, value))
         {
             Name = name;
             Value = value;
