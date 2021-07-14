@@ -12,7 +12,7 @@ namespace Structogreiner.I18n.Language
 
         public string Return(string text) => $"RückgabeWert: {text}";
 
-        public string InputParameter() => "Eingabe Parameter";
+        public string InputParameters() => "Eingabe Parameter";
 
         public string VariableDeclaration() => "Variable Deklarationen";
 
@@ -76,7 +76,7 @@ namespace Structogreiner.I18n.Language
             { TypeOf<object>(), "Objekt" },
             { TypeOf<object[]>(), "ObjektArray" },
         };
-        public string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
+        public static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
 
         public string VariableAssignment(string name, string value) => $"{name} <- {value}";
 

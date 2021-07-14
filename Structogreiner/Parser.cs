@@ -75,7 +75,12 @@ namespace Structogreiner
             var parameters = method.ParameterList.Parameters.Select(p =>
             {
                 var symbolInfo = semanticModel.GetSymbolInfo(p.Type!);
-                return new VariableDeclaration(p.Identifier.Text, new Type(symbolInfo.Symbol?.ToString()!));
+                var parmType = new Type(GetSymbolName(symbolInfo));
+                if (symbolInfo.Symbol!.Kind == SymbolKind.ArrayType)
+                {
+                    parmType.IsArray = true;
+                }
+                return new VariableDeclaration(p.Identifier.Text, parmType);
             }).ToList();
 
             var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
@@ -342,7 +347,10 @@ namespace Structogreiner
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
             var type = GetSymbolName(symbolInfo);
             var typeObj = new Type(type);
-            if(symbolInfo.Symbol!.Kind == SymbolKind.ArrayType) typeObj.IsArray = true;
+            if (symbolInfo.Symbol!.Kind == SymbolKind.ArrayType)
+            {
+                typeObj.IsArray = true;
+            }
 
             Console.WriteLine(type);
 
