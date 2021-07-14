@@ -340,15 +340,32 @@ namespace Structogreiner
             ICollection<VariableDeclaration> variables)
         {
             var symbolInfo = semanticModel.GetSymbolInfo(lvd.Declaration.Type);
-            var type = symbolInfo.Symbol!.Name;
+            var type = GetSymbolName(symbolInfo);
+            var typeObj = new Type(type);
+            if(symbolInfo.Symbol!.Kind == SymbolKind.ArrayType) typeObj.IsArray = true;
+
+            Console.WriteLine(type);
 
             foreach (var node in lvd.DescendantNodes())
             {
                 if (node is not VariableDeclarationSyntax vd) continue;
 
                 var name = vd.Variables[0].Identifier.Text;
-                variables.Add(new VariableDeclaration(name, new Type(type)));
+                variables.Add(new VariableDeclaration(name, typeObj));
             }
         }
+
+        private string GetSymbolName(SymbolInfo symbolInfo)
+        {
+            var type = symbolInfo.Symbol!.Name;
+            if (symbolInfo.Symbol is IArrayTypeSymbol arraySymbol)
+            {
+                type = arraySymbol.ElementType.Name;
+            }
+            return type;
+        }
+
+        public static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
+
     }
 }
