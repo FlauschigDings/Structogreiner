@@ -2,6 +2,8 @@
 
 namespace Structogreiner.I18n.Language
 {
+       // Methode: vor den Methoden name.
+       // Ref und out werden mit (ref) oder (out) in variablen geschrieben.
     internal class GreinerLanguage : II18n
     {
         public string Language() => "GreinerLang";
@@ -12,13 +14,14 @@ namespace Structogreiner.I18n.Language
 
         public string Return(string text) => $"RückgabeWert: {text}";
 
-        public string InputParameters() => "Eingabe Parameter";
+        public string InputParameters() => "Übergabeparameter";
 
+        // Rein in den Body
         public string VariableDeclaration() => "Variable Deklarationen";
 
-        public string ReturnValue() => "Rückgabe Parameter";
+        public string ReturnValue() => "Rückgabedatentyp";
 
-        public string If(string ifValue) => $"{ifValue} ?";
+        public string If(string ifValue) => $"{ifValue} (?)";
 
         public string For(
             string variableName,
