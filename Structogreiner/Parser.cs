@@ -11,7 +11,6 @@ using Structogreiner.Xml;
 using Structogreiner.Xml.Objects.ControlStructures;
 using Structogreiner.Xml.Objects.ControlStructures.Loops;
 using Structogreiner.Xml.Objects.Inline;
-using System.IO;
 
 namespace Structogreiner
 {
@@ -19,6 +18,7 @@ namespace Structogreiner
     {
         public async Task<List<Function>> Parse(string projectFile)
         {
+            MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(projectFile);
             var roots = new List<Function>();
@@ -34,7 +34,6 @@ namespace Structogreiner
         private async Task<List<Function>> ParseDocument(Document document)
         {
             var rootNode = (await document.GetSyntaxRootAsync())!;
-            CSharpCompilation.Create()
             var semanticModel = (await document.GetSemanticModelAsync())!;
 
             var methods = new List<Function>();
