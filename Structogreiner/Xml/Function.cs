@@ -69,7 +69,7 @@ namespace Structogreiner.Xml
         {
             if (type is MethodType.Sub)
             {
-                var inputParmsTitle = $"{Program.I18n.InputParameters()}:";
+                var inputParmsTitle = $"{Program.I18n.InputParameter()}:";
                 var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
 
                 var varsTitle = $"{Program.I18n.VariableDeclaration()}:";

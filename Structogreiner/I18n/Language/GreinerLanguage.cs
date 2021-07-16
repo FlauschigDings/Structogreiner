@@ -83,7 +83,7 @@ namespace Structogreiner.I18n.Language
             { TypeOf<object>(), "Objekt" },
             { TypeOf<object[]>(), "ObjektArray" },
         };
-        public static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
+        public string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
 
         public string VariableAssignment(string name, string value) => $"{name} <- {value}";
 
