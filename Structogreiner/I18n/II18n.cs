@@ -14,7 +14,7 @@ namespace Structogreiner.I18n
         string Return(string text);
 
         // Function Translate
-        string InputParameters();
+        string InputParameter();
         string VariableDeclaration();
         string ReturnValue();
 
@@ -24,12 +24,12 @@ namespace Structogreiner.I18n
             IntVariable startValue,
             IntVariable endValue,
             IntVariable stepConst
-        );
+            );
 
         string Foreach(
             string variableName,
             string array
-        );
+            );
 
         string If(string ifValue);
         string VariableAssignment(string name, string value);

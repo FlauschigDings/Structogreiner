@@ -2,6 +2,11 @@
 
 namespace Structogreiner.I18n.Language
 {
+       // Methode: vor den Methoden name.
+       // Ref und out werden mit (ref) oder (out) in variablen geschrieben. {@bsp. "test: Ganzzahl (Referenzparameter Typ out|ref)"}
+       // void = keinen datentyp
+       // % = in mod umbennen
+       // mehrere Parameter in einer zeile, mit selben daten typ {@bsp. "stunden, minuten, sekunden: Ganzzahl"}
     internal class GreinerLanguage : II18n
     {
         public string Language() => "GreinerLang";
@@ -10,15 +15,17 @@ namespace Structogreiner.I18n.Language
 
         public string Output(string output) => $"AUSGABE DIALOG: {output}";
 
-        public string Return(string text) => $"RückgabeWert: {text}";
+        public string Return(string text) => $"Rückgabewert: {text}";
 
-        public string InputParameters() => "Eingabe Parameter";
+        // Einrücken um 3 spaces
+        public string InputParameters() => "Übergabeparameter";
 
+        // Rein in den Body
         public string VariableDeclaration() => "Variable Deklarationen";
 
-        public string ReturnValue() => "Rückgabe Parameter";
+        public string ReturnValue() => "Rückgabedatentyp";
 
-        public string If(string ifValue) => $"{ifValue} ?";
+        public string If(string ifValue) => $"{ifValue} (?)";
 
         public string For(
             string variableName,
@@ -76,7 +83,7 @@ namespace Structogreiner.I18n.Language
             { TypeOf<object>(), "Objekt" },
             { TypeOf<object[]>(), "ObjektArray" },
         };
-        public static string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
+        public string TypeOf<T>() => typeof(T).FullName!.Split(".")[1];
 
         public string VariableAssignment(string name, string value) => $"{name} <- {value}";
 
