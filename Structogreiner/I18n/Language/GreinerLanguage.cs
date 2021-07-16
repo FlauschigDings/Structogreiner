@@ -18,7 +18,7 @@ namespace Structogreiner.I18n.Language
         public string Return(string text) => $"Rückgabewert: {text}";
 
         // Einrücken um 3 spaces
-        public string InputParameters() => "Übergabeparameter";
+        public string InputParameter() => "Übergabeparameter";
 
         // Rein in den Body
         public string VariableDeclaration() => "Variable Deklarationen";
