@@ -70,10 +70,10 @@ namespace Structogreiner.Xml
             if (type is MethodType.Sub)
             {
                 var inputParmsTitle = $"{Program.I18n.InputParameter()}:";
-                var inputParms = string.Join(",", parameters.Select(p => $"{p}"));
+                var inputParms = string.Join("\n", parameters.Select(p => $"   {p}"));
 
                 var varsTitle = $"{Program.I18n.VariableDeclaration()}:";
-                var varsParam = string.Join(",", variables.Select(v => $"{v.Name}: {v.Type}"));
+                var varsParam = string.Join("\n", variables.Select(v => $"{v.Name}: {v.Type}"));
 
                 var returnParmTitle = "";
                 var returnParm = "";
@@ -87,7 +87,7 @@ namespace Structogreiner.Xml
                 return $"\"{title}\", \"{inputParmsTitle}\", \"{inputParms}\", \"{varsTitle}\", \"{varsParam}\", \"{returnParmTitle}\", \"{returnParm}\"";
             }
             variables.ForEach(e => this.AddXmlObject(e));
-            return $"{title}";
+            return title;
         }
     }
 }

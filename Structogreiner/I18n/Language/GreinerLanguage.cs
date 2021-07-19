@@ -15,7 +15,7 @@ namespace Structogreiner.I18n.Language
 
         public string Output(string output) => $"AUSGABE DIALOG: {output}";
 
-        public string Return(string text) => $"Rückgabewert: {text}";
+        public string Return(string text) => $"Rückgabe: {text}";
 
         // Einrücken um 3 spaces
         public string InputParameter() => "Übergabeparameter";
@@ -32,12 +32,12 @@ namespace Structogreiner.I18n.Language
             IntVariable startValue,
             IntVariable endValue,
             IntVariable stepConst
-            ) => $"{variableName}: AW={startValue}, EW={endValue}, SW={stepConst}";
+        ) => $"{variableName}: AW={startValue}, EW={endValue}, SW={stepConst}";
 
         public string Foreach(
             string variableName,
             string array
-            ) => $"{variableName}:  AW={1}, EW={$"{array}.Length"}, SW={1}";
+        ) => $"{variableName}:  AW={1}, EW={$"{array}.Length"}, SW={1}";
 
         public Dictionary<string, string> Mappings() => new()
         {
