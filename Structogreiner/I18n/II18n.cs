@@ -26,12 +26,12 @@ namespace Structogreiner.I18n
             IntVariable startValue,
             IntVariable endValue,
             IntVariable stepConst
-            );
+        );
 
         string Foreach(
             string variableName,
             string array
-            );
+        );
 
         string If(string ifValue);
         string VariableAssignment(string name, string value);
@@ -48,6 +48,5 @@ namespace Structogreiner.I18n
         string Language();
 
         Dictionary<string, string> Mappings();
-
     }
 }
