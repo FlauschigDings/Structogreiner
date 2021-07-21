@@ -9,7 +9,10 @@ namespace Structogreiner.I18n.Language
        // mehrere Parameter in einer zeile, mit selben daten typ {@bsp. "stunden, minuten, sekunden: Ganzzahl"}
     internal class GreinerLanguage : II18n
     {
+
         public string Language() => "GreinerLang";
+
+        public string Modolo() => "mod";
 
         public string Input(string input) => $"EINGABE DIALOG: {input}";
 

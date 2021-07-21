@@ -8,6 +8,10 @@ namespace ParseTest
         {
             var arr = new int[] { 2, 5, -1, 9, 4, 6, 123, 100 };
             Sort(arr);
+            if(arr[0] % 2 == 0)
+            {
+                arr[0] = arr[0] % 2;
+            }
             Console.WriteLine(string.Join(", ", arr));
 
             var greiner = "Greiner";

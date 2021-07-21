@@ -256,7 +256,10 @@ namespace Structogreiner
 
         private void ParseIfElse(IfStatementSyntax ifs, List<XmlObject> objects)
         {
-            var ifElse = new IfElse(ifs.Condition.ToString());
+            var ifInput = ifs.Condition.ToString();
+            ifInput = ifInput.Replace("%", Program.I18n.Modolo());
+
+            var ifElse = new IfElse(ifInput);
             foreach (var xmlObj in ParseNode(ifs.Statement))
             {
                 ifElse.AddXmlObject(true, xmlObj);
@@ -280,7 +283,9 @@ namespace Structogreiner
 
         private void ParseVariableAssignment(AssignmentExpressionSyntax assignment, List<XmlObject> objects)
         {
-            objects.Add(new VariableAssignment(assignment.Left.ToString(), assignment.Right.ToString()));
+            var value = assignment.Right.ToString();
+            value = value.Replace("%", Program.I18n.Modolo());
+            objects.Add(new VariableAssignment(assignment.Left.ToString(), value));
         }
 
         private void ParseVariableAssignment(LocalDeclarationStatementSyntax lvd, ICollection<XmlObject> objects)
@@ -291,6 +296,9 @@ namespace Structogreiner
                 var name = vd.Identifier.Text;
                 if (vd.Initializer == null) continue;
                 var value = vd.Initializer.Value.ToString();
+
+                value = value.Replace("%", Program.I18n.Modolo());
+
                 if (value == "Console.ReadKey()")
                 {
                     objects.Add(new Input(name));

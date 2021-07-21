@@ -9,6 +9,8 @@ namespace Structogreiner.I18n
     internal interface II18n : II18nLanguage
     {
         // Inline
+
+        string Modolo();
         string Input(string input);
         string Output(string output);
         string Return(string text);
