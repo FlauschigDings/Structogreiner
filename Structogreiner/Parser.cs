@@ -17,12 +17,12 @@ namespace Structogreiner
     internal class Parser
     {
         private SemanticModel? _semanticModel;
-        
+
         public async Task<Project> Parse(string projectFile)
         {
             MSBuildLocator.RegisterDefaults();
             using var workspace = MSBuildWorkspace.Create();
-            
+
             var project = await workspace.OpenProjectAsync(projectFile);
             var codeFiles = new List<CodeFile>();
 
@@ -38,7 +38,7 @@ namespace Structogreiner
         {
             var rootNodeTask = document.GetSyntaxRootAsync();
             var semanticModelTask = document.GetSemanticModelAsync();
-            
+
             var rootNode = (await rootNodeTask)!;
             _semanticModel = (await semanticModelTask)!;
 
@@ -48,7 +48,6 @@ namespace Structogreiner
             {
                 if (node is MethodDeclarationSyntax statement)
                 {
-                    
                 }
             }
 
@@ -65,30 +64,28 @@ namespace Structogreiner
                     case LocalDeclarationStatementSyntax statement:
                         foreach (var variable in statement.Declaration.Variables)
                         {
-                            variables.Add(new VariableDeclaration(variable.Identifier.Text, GetTypeFromSymbol(statement.Declaration.Type)!));
+                            variables.Add(new VariableDeclaration(variable.Identifier.Text,
+                                GetTypeFromSymbol(statement.Declaration.Type)!));
                         }
                         break;
+
                     case ForStatementSyntax statement:
-                        {
-                            var declaration = statement.Declaration;
-                            if (declaration is null) break;
-                            variables.Add(
-                                new VariableDeclaration(declaration.Variables[0].Identifier.Text,
-                                GetTypeFromSymbol(declaration.Type))
-                            );
-                            break;
-                        }
+                        var declaration = statement.Declaration;
+                        if (declaration is null) break;
+                        variables.Add(new VariableDeclaration(declaration.Variables[0].Identifier.Text, GetTypeFromSymbol(declaration.Type)));
+                        break;
                 }
             }
 
             var parameters = method.ParameterList.Parameters
                 .Select(p => new VariableDeclaration(p.Identifier.Text, GetTypeFromSymbol(p.Type!))).ToList();
 
-            var block = (SyntaxNode?)method.Body ?? method.ExpressionBody;
-            
+            var methodNode = (SyntaxNode?)method.Body ?? method.ExpressionBody!;
+
             var type = method.Identifier.Text == "Main" ? MethodType.Main : MethodType.Sub;
             var returnType = new Type(method.ReturnType.ToString());
-            
+            var block = ParseBlock(methodNode);
+
             return new Function(method.Identifier.ToString(), "", variables, parameters, returnType, type);
             //if (block is null) return;
 
@@ -99,8 +96,60 @@ namespace Structogreiner
             //{
             //    root.AddXmlObject(instruction);
             //}
-//
+            //
             //methods.Add(root);
+        }
+
+        private Block ParseBlock(SyntaxNode blockNode)
+        {
+            var instructions = new List<IInstruction>();
+            foreach (var node in blockNode.ChildNodes())
+            {
+                IInstruction? instruction = node switch
+                {
+                    BlockSyntax block => ParseBlock(block),
+                    IfStatementSyntax ifStatement => ParseIfStatement(ifStatement),
+                    _ => null
+                };
+                if (instruction is not null)
+                {
+                    instructions.Add(instruction);
+                }
+            }
+            return new Block(instructions);
+        }
+
+        private IExpression ParseExpression(ExpressionSyntax expressionNode)
+        {
+            return expressionNode switch
+            {
+                BinaryExpressionSyntax binaryExpressionNode => ParseBinaryExpression(binaryExpressionNode),
+                _ => null!
+            };
+        }
+
+        private BinaryExpression ParseBinaryExpression(BinaryExpressionSyntax binaryExpressionNode)
+        {
+            Operator? exprOperator = binaryExpressionNode.OperatorToken.Kind() switch
+            {
+                SyntaxKind.LogicalAndExpression => Operator.LogicalAnd,
+                SyntaxKind.BitwiseAndExpression => Operator.BitwiseAnd,
+                SyntaxKind.LogicalOrExpression => Operator.LogicalAnd,
+                SyntaxKind.BitwiseOrExpression => Operator.BitwiseOr,
+                SyntaxKind.LogicalNotExpression => Operator.LogicalNot,
+                SyntaxKind.AddExpression => Operator.Add,
+                SyntaxKind.SubtractExpression => Operator.Subtract,
+                SyntaxKind.MultiplyExpression => Operator.Multiply,
+                SyntaxKind.DivideExpression => Operator.Divide,
+                SyntaxKind.ModuloExpression => Operator.Modulo,
+                _ => null
+            };
+            return new BinaryExpression((Operator)exprOperator!, ParseExpression(binaryExpressionNode.Left), ParseExpression(binaryExpressionNode.Right));
+        }
+
+        private IfStatement ParseIfStatement(IfStatementSyntax ifStatementNode)
+        {
+            return new IfStatement(ParseExpression(ifStatementNode.Condition)!, ParseBlock(ifStatementNode.Statement));
         }
 
         private Type GetTypeFromSymbol(TypeSyntax type) => new(_semanticModel.GetSymbolInfo(type).Symbol?.ToString()!);
